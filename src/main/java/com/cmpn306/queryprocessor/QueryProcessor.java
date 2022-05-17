@@ -75,7 +75,7 @@ public class QueryProcessor {
                                         .distinct()
                                         .toList();
 
-        Ranker.rank(tokensList, results);
+        //Ranker.rank(tokensList, results); TODO: fix function call
 
         return results;
     }

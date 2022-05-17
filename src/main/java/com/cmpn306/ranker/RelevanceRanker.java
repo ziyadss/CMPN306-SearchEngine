@@ -1,5 +1,13 @@
 package com.cmpn306.ranker;
 
-public class RelevanceRanker {
+import java.util.HashMap;
+import java.util.List;
 
+public class RelevanceRanker {
+    public RelevanceRanker(){
+
+    }
+    public void rank(HashMap<String, List<QueryPageResult>> resultsMap){
+
+    }
 }
