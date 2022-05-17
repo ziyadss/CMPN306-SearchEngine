@@ -12,13 +12,15 @@ public class Database {
     String schemaPath = "./schema.sql";
     String databaseName = "searchEngineDatabase";
     Connection connection ;
-    Database(){
+    Database() throws SQLException, IOException {
+        connectDatabase();
+        createTables();
 
     }
     void connectDatabase() throws SQLException {
         connection = DriverManager.getConnection("jdbc:sqlite:"+databaseName);
     }
-    void createTable() throws IOException, SQLException {
+    void createTables() throws IOException, SQLException {
         Path filePath = Path.of(schemaPath);
         String sql = Files.readString(filePath);
         String[] tokens=sql.split(";");
