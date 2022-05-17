@@ -7,7 +7,7 @@ import java.sql.*;
 
 public class Database {
     private final String     SCHEMA_PATH   = "./schema.sql";
-    private final String     DATABASE_NAME = "searchEngineDatabase";
+    private final String     DATABASE_NAME = "searchEngineDatabase.db";
     private final Connection connection;
 
     public Database() throws SQLException, IOException {

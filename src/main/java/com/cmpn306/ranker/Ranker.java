@@ -10,6 +10,10 @@ public class Ranker {
     private final RelevanceRanker  relevanceRanker  = new RelevanceRanker();
     int totalDocCount;
 
+    public Ranker(){
+
+    }
+
     public static void rank(List<String> tokensList, List<QueryResult> results) {
 
     }
