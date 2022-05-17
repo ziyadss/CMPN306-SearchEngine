@@ -1,4 +1,6 @@
 package com.cmpn306.ranker;
+import com.cmpn306.queryprocessor.QueryProcessor;
+import java.util.List;
 
 public class Ranker {
 
@@ -11,7 +13,11 @@ public class Ranker {
         relevanceRanker = new RelevanceRanker();
     }
 
-    void calculatePageRank(){
+    void calculatePageRank() {
         popularityRanker.calculatePageRank();
+    }
+    public static void rank(List<String> tokensList, List<QueryProcessor.QueryResult> results) {
+
+
     }
 }
