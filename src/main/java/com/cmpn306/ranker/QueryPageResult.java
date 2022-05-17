@@ -6,14 +6,16 @@ public class QueryPageResult {
     String word;
     String docUrl;
     int wordCount;
-    int tf;
-    int idf;
-    int tfIdf;
+    float tf;
+    float idf;
+    float tfIdf;
 
     //Data members from the documents table
     int docWordCount;
     int content;
     int title;
+
+    float relevanceScore;
 
     public String getWord() {
         return word;
@@ -39,27 +41,27 @@ public class QueryPageResult {
         this.wordCount = wordCount;
     }
 
-    public int getTf() {
+    public float getTf() {
         return tf;
     }
 
-    public void setTf(int tf) {
+    public void setTf(float tf) {
         this.tf = tf;
     }
 
-    public int getIdf() {
+    public float getIdf() {
         return idf;
     }
 
-    public void setIdf(int idf) {
+    public void setIdf(float idf) {
         this.idf = idf;
     }
 
-    public int getTfIdf() {
+    public float getTfIdf() {
         return tfIdf;
     }
 
-    public void setTfIdf(int tfIdf) {
+    public void setTfIdf(float tfIdf) {
         this.tfIdf = tfIdf;
     }
 
@@ -87,6 +89,13 @@ public class QueryPageResult {
         this.title = title;
     }
 
+    public float getRelevanceScore() {
+        return relevanceScore;
+    }
+
+    public void setRelevanceScore(float relevanceScore) {
+        this.relevanceScore = relevanceScore;
+    }
 
     public QueryPageResult(){
 
@@ -94,5 +103,22 @@ public class QueryPageResult {
 
     public String toJson(){
         return "";
+    }
+
+    public void calculateTf(){
+        setTf(wordCount/docWordCount); //TODO: add query to update value in table
+    }
+    public void calculateIdf(int totalDocCount,int refDocCount){
+        setIdf((float) Math.log(totalDocCount/refDocCount));
+    }
+    public void calculateTfIdf(){
+        setTfIdf(tf*idf);
+    }
+
+    public void calculateRelevance(int totalDocCount, int refDocCount){
+        calculateTf();
+        calculateIdf(totalDocCount,refDocCount);
+        calculateTfIdf();
+        setRelevanceScore((float) (tfIdf + 0*1.0)); //TODO: Add other scores multiplied by factors to give final relevance score
     }
 }
