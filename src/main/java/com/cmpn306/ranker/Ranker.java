@@ -1,23 +1,20 @@
 package com.cmpn306.ranker;
-import com.cmpn306.queryprocessor.QueryProcessor;
+
+import com.cmpn306.queryprocessor.QueryProcessor.QueryResult;
+
 import java.util.List;
 
 public class Ranker {
 
-    public PopularityRanker popularityRanker;
-    public RelevanceRanker relevanceRanker;
+    private final PopularityRanker popularityRanker = new PopularityRanker();
+    private final RelevanceRanker  relevanceRanker  = new RelevanceRanker();
     int totalDocCount;
 
-    Ranker(){
-        popularityRanker = new PopularityRanker();
-        relevanceRanker = new RelevanceRanker();
+    public static void rank(List<String> tokensList, List<QueryResult> results) {
+
     }
 
     void calculatePageRank() {
         popularityRanker.calculatePageRank();
-    }
-    public static void rank(List<String> tokensList, List<QueryProcessor.QueryResult> results) {
-
-
     }
 }

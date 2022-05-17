@@ -1,12 +1,12 @@
 package com.cmpn306.ranker;
 
-public class PopularityRanker{
+public class PopularityRanker {
 
-    PopularityRanker(){
+    PopularityRanker() {
 
     }
 
-    void calculatePageRank(){
+    void calculatePageRank() {
 
     }
 }

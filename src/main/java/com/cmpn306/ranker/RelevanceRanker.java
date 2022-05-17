@@ -1,5 +1,5 @@
 package com.cmpn306.ranker;
 
-public class RelevanceRanker{
+public class RelevanceRanker {
 
 }
