@@ -49,9 +49,9 @@ public class RelevanceRanker {
             List<QueryPageResult> docList = (List<QueryPageResult>) pair.getValue();
             docList.sort(new Comparator<QueryPageResult>() {
                 @Override public int compare(QueryPageResult o1, QueryPageResult o2) {
-                    if(o1.getRelevanceScore()>o2.getRelevanceScore())
+                    if(o2.getRelevanceScore()>o1.getRelevanceScore())
                         return 1;
-                    else if (o1.getRelevanceScore()<o2.getRelevanceScore())
+                    else if (o2.getRelevanceScore()<o1.getRelevanceScore())
                         return -1;
                     else return 0;
                 }
