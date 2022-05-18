@@ -5,10 +5,7 @@ import com.cmpn306.database.DocumentsTable;
 import com.cmpn306.util.Filterer;
 
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Indexer implements Runnable {
     private int sleepTime;
@@ -18,15 +15,13 @@ public class Indexer implements Runnable {
     //TO DO: acquire documentsTable
     private DocumentsTable documentsTable;
 
-//    private KeywordsTable keywordsTable;
+    //    private KeywordsTable keywordsTable;
 
-    @Override
-    public void run() {
+    @Override public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(sleepTime);
-            }
-            catch (InterruptedException ignored) {
+            } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
 
@@ -34,18 +29,17 @@ public class Indexer implements Runnable {
             //TO DO: clean this
 
             // Fetch non indexed docs
-            List<Document> documents = null;
+            List<Document> documents;
             try {
                 documents = fetchToIndex();
             } catch (SQLException e) {
                 e.printStackTrace();
+                continue;
             }
             // for every document
             for (Document document: documents) {
 
-                List<String> words = Filterer.rawText(document.getContent());
-
-                Map<String, Integer> wordFreq = new HashMap<String, Integer>();
+                List<String> words = Collections.singletonList(Filterer.rawText(document.getContent()));
 
                 try {
                     documentsTable.updateCountByURL(document.getDocUrl(), words.size());
@@ -53,30 +47,15 @@ public class Indexer implements Runnable {
                     e.printStackTrace();
                 }
 
-
-                for (String word: words) {
-                    Integer count = wordFreq.get(word);
-                    if (count == null)
-                        wordFreq.put(word, 1);
-                    else
-                        wordFreq.put(word, count + 1);
-                }
-
-
-
+                Map<String, Long> wordFreq = new HashMap<>();
+                words.forEach(word -> wordFreq.merge(word, 1L, Long::sum));
 
             }
-
-
-
-
-
         }
     }
 
     private List<Document> fetchToIndex() throws SQLException {
         return documentsTable.getIndexable(iterationSize);
     }
-
 
 }

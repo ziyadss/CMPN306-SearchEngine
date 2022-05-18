@@ -1,35 +1,58 @@
 package com.cmpn306.database;
 
+import org.sqlite.SQLiteDataSource;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 
-public class Database {
-    private static final String     SCHEMA_PATH   = "./schema.sql";
-    private static final String     DATABASE_NAME = "searchEngineDatabase.db";
-    protected static final Connection;
+public enum Database {
+    INSTANCE;
 
+    private final String           SCHEMA_PATH   = "./schema.sql";
+    private final String           DATABASE_NAME = "searchEngineDatabase.db";
+    private final SQLiteDataSource dataSource    = new SQLiteDataSource();
 
-    public Database() throws SQLException, IOException {
-        createTables();
+    Database() {
+        dataSource.setUrl("jdbc:sqlite:" + DATABASE_NAME);
+        try {
+            createTables();
+        } catch (IOException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     void createTables() throws IOException, SQLException {
-        Statement stmt = connection.createStatement();
+        try (
+                Connection connection = dataSource.getConnection();
+                Statement stmt = connection.createStatement()
+        ) {
+            String[] tokens = Files.readString(Path.of(SCHEMA_PATH)).split(";");
 
-        String   sql    = Files.readString(Path.of(SCHEMA_PATH));
-        String[] tokens = sql.split(";");
-
-        for (String token: tokens) {
-            if (!token.isBlank())
-                stmt.addBatch(token);
+            for (String token: tokens) {
+                if (!token.isBlank())
+                    stmt.addBatch(token);
+            }
+            stmt.executeBatch();
         }
-        
-        stmt.executeBatch();
     }
 
-    public static String getDataBaseName() {
-        return DATABASE_NAME;
+    ResultSet query(String query) throws SQLException {
+        try (
+                Connection connection = dataSource.getConnection();
+                Statement stmt = connection.createStatement()
+        ) {
+            return stmt.executeQuery(query);
+        }
+    }
+
+    void update(String query) throws SQLException {
+        try (
+                Connection connection = dataSource.getConnection();
+                Statement stmt = connection.createStatement()
+        ) {
+            stmt.executeUpdate(query);
+        }
     }
 }
