@@ -17,7 +17,6 @@ public enum Database {
     Database() {
         dataSource.setUrl("jdbc:sqlite:" + DATABASE_NAME);
         createTables();
-
     }
 
     void createTables() {
