@@ -52,7 +52,6 @@
       <option name="ARRAY_INITIALIZER_WRAP" value="5" />
       <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
       <option name="METHOD_ANNOTATION_WRAP" value="5" />
-      <option name="CLASS_ANNOTATION_WRAP" value="5" />
       <option name="ENUM_CONSTANTS_WRAP" value="5" />
     </codeStyleSettings>
     <codeStyleSettings language="kotlin">
