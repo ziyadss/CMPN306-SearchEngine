@@ -47,12 +47,12 @@ public enum Database {
         }
     }
 
-    void update(String query) throws SQLException {
+    int update(String query) throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement()
         ) {
-            stmt.executeUpdate(query);
+            return stmt.executeUpdate(query);
         }
     }
 }
