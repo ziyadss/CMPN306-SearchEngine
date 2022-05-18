@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class RelevanceRanker {
-    public RelevanceRanker(){
+    public RelevanceRanker() {
 
     }
-    public void rank(HashMap<String, List<QueryPageResult>> resultsMap){
+
+    public void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
 
     }
 }

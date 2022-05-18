@@ -5,10 +5,10 @@ public class QueryPageResult {
     //Data members from the word_document table
     String word;
     String docUrl;
-    int wordCount;
-    float tf;
-    float idf;
-    float tfIdf;
+    int    wordCount;
+    float  tf;
+    float  idf;
+    float  tfIdf;
 
     //Data members from the documents table
     int docWordCount;
@@ -16,6 +16,10 @@ public class QueryPageResult {
     int title;
 
     float relevanceScore;
+
+    public QueryPageResult() {
+
+    }
 
     public String getWord() {
         return word;
@@ -97,28 +101,26 @@ public class QueryPageResult {
         this.relevanceScore = relevanceScore;
     }
 
-    public QueryPageResult(){
-
-    }
-
-    public String toJson(){
+    public String toJson() {
         return "";
     }
 
-    public void calculateTf(){
-        setTf(wordCount/docWordCount); //TODO: add query to update value in table
-    }
-    public void calculateIdf(int totalDocCount,int refDocCount){
-        setIdf((float) Math.log(totalDocCount/refDocCount));
-    }
-    public void calculateTfIdf(){
-        setTfIdf(tf*idf);
+    public void calculateTf() {
+        setTf(wordCount / docWordCount); //TODO: add query to update value in table
     }
 
-    public void calculateRelevance(int totalDocCount, int refDocCount){
+    public void calculateIdf(int totalDocCount, int refDocCount) {
+        setIdf((float) Math.log(totalDocCount / refDocCount));
+    }
+
+    public void calculateTfIdf() {
+        setTfIdf(tf * idf);
+    }
+
+    public void calculateRelevance(int totalDocCount, int refDocCount) {
         calculateTf();
-        calculateIdf(totalDocCount,refDocCount);
+        calculateIdf(totalDocCount, refDocCount);
         calculateTfIdf();
-        setRelevanceScore((float) (tfIdf + 0*1.0)); //TODO: Add other scores multiplied by factors to give final relevance score
+        setRelevanceScore((float) (tfIdf + 0 * 1.0)); //TODO: Add other scores multiplied by factors to give final relevance score
     }
 }

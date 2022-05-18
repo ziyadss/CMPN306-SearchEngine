@@ -1,6 +1,5 @@
 package com.cmpn306.queryprocessor;
 
-import com.cmpn306.ranker.Ranker;
 import com.cmpn306.util.Stemmer;
 
 import java.util.ArrayList;

@@ -1,24 +1,25 @@
 package com.cmpn306.database;
 
-import java.util.List;
-
 public class Document {
     private String docUrl;
     private String content;
-    private long wordCount;
-    private long indexedTime;
-    private long timeCurrent;
-    private float pageRank;
+    private long   wordCount;
+    private long   indexedTime;
+    private long   timeCurrent;
+    private float  pageRank;
     private String pageTitle;
 
-
     public Document(String docUrl, String content, long wordCount, long timeCurrent, float pageRank, String pageTitle) {
-        this.docUrl = docUrl;
-        this.content = content;
-        this.wordCount = wordCount;
+        this.docUrl      = docUrl;
+        this.content     = content;
+        this.wordCount   = wordCount;
         this.timeCurrent = timeCurrent;
-        this.pageRank = pageRank;
-        this.pageTitle = pageTitle;
+        this.pageRank    = pageRank;
+        this.pageTitle   = pageTitle;
+    }
+
+    public String getDocUrl() {
+        return docUrl;
     }
 
     public Document setDocUrl(String docUrl) {
@@ -26,9 +27,17 @@ public class Document {
         return this;
     }
 
+    public String getContent() {
+        return content;
+    }
+
     public Document setContent(String content) {
         this.content = content;
         return this;
+    }
+
+    public long getWordCount() {
+        return wordCount;
     }
 
     public Document setWordCount(long wordCount) {
@@ -36,9 +45,17 @@ public class Document {
         return this;
     }
 
+    public long getTimeCurrent() {
+        return timeCurrent;
+    }
+
     public Document setTimeCurrent(long timeCurrent) {
         this.timeCurrent = timeCurrent;
         return this;
+    }
+
+    public float getPageRank() {
+        return pageRank;
     }
 
     public Document setPageRank(float pageRank) {
@@ -46,34 +63,14 @@ public class Document {
         return this;
     }
 
-    public Document setPageTitle(String pageTitle) {
-        this.pageTitle = pageTitle;
-        return this;
-    }
-
-    public String getDocUrl() {
-        return docUrl;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public long getWordCount() {
-        return wordCount;
-    }
-
-    public long getTimeCurrent() {
-        return timeCurrent;
-    }
-
-    public float getPageRank() {
-        return pageRank;
-    }
-
     //TO DO: format page title and return it directly
     public String getPageTitle() {
         return pageTitle;
+    }
+
+    public Document setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+        return this;
     }
     //TO DO: Add a snippet extractor ?
 
