@@ -1,14 +1,22 @@
 package com.cmpn306.indexer;
 
 import com.cmpn306.database.Document;
+import com.cmpn306.database.DocumentsTable;
+import com.cmpn306.util.Filterer;
+
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Indexer implements Runnable {
     private int sleepTime;
 
     private int iterationSize;
 
-//    private DocumentsTable documentsTable;
+    //TO DO: acquire documentsTable
+    private DocumentsTable documentsTable;
 
 //    private KeywordsTable keywordsTable;
 
@@ -23,7 +31,41 @@ public class Indexer implements Runnable {
             }
 
             int wordCount = 0;
-//            List<Document> documents = fetchToIndex();
+            //TO DO: clean this
+
+            // Fetch non indexed docs
+            List<Document> documents = null;
+            try {
+                documents = fetchToIndex();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            // for every document
+            for (Document document: documents) {
+
+                List<String> words = Filterer.rawText(document.getContent());
+
+                Map<String, Integer> wordFreq = new HashMap<String, Integer>();
+
+                try {
+                    documentsTable.updateCountByURL(document.getDocUrl(), words.size());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
+                for (String word: words) {
+                    Integer count = wordFreq.get(word);
+                    if (count == null)
+                        wordFreq.put(word, 1);
+                    else
+                        wordFreq.put(word, count + 1);
+                }
+
+
+
+
+            }
 
 
 
@@ -32,8 +74,9 @@ public class Indexer implements Runnable {
         }
     }
 
-//    private List<Document> fetchToIndex() {
-//        return documentsTable.getDocuments(iterationSize);
-//    }
+    private List<Document> fetchToIndex() throws SQLException {
+        return documentsTable.getIndexable(iterationSize);
+    }
+
 
 }

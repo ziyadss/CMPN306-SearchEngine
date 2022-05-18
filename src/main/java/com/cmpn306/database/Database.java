@@ -6,12 +6,12 @@ import java.nio.file.Path;
 import java.sql.*;
 
 public class Database {
-    private final String     SCHEMA_PATH   = "./schema.sql";
-    private final String     DATABASE_NAME = "searchEngineDatabase.db";
-    private final Connection connection;
+    private static final String     SCHEMA_PATH   = "./schema.sql";
+    private static final String     DATABASE_NAME = "searchEngineDatabase.db";
+    protected static final Connection;
+
 
     public Database() throws SQLException, IOException {
-        connection = DriverManager.getConnection("jdbc:sqlite:" + DATABASE_NAME);
         createTables();
     }
 
@@ -27,5 +27,9 @@ public class Database {
         }
         
         stmt.executeBatch();
+    }
+
+    public static String getDataBaseName() {
+        return DATABASE_NAME;
     }
 }
