@@ -16,14 +16,11 @@ public enum Database {
 
     Database() {
         dataSource.setUrl("jdbc:sqlite:" + DATABASE_NAME);
-        try {
-            createTables();
-        } catch (IOException | SQLException e) {
-            throw new RuntimeException(e);
-        }
+        createTables();
+
     }
 
-    void createTables() throws IOException, SQLException {
+    void createTables() {
         try (
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement()
@@ -34,7 +31,10 @@ public enum Database {
                 if (!token.isBlank())
                     stmt.addBatch(token);
             }
+
             stmt.executeBatch();
+        } catch (IOException | SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
