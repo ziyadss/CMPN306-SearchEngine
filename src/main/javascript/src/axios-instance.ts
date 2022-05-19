@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default axios.create({
-  baseURL: 'https://vue-http-demo-4791b-default-rtdb.europe-west1.firebasedatabase.app/'
+  baseURL: import.meta.env.VITE_APP_SEARCH_ENGINE_API
 });
 
 export const axiosAuth = axios.create({

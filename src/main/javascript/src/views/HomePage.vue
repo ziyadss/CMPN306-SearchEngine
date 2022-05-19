@@ -40,10 +40,12 @@ import BaseDialog from '@/components/ui/BaseDialog.vue';
 import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { defineComponent } from 'vue';
 
+import axios from '@/axios-instance';
+
 export default defineComponent({
   components: { BaseButton, BaseCard, BaseDialog, BaseSpinner },
   data() {
-    return { query: { value: '', valid: true }, error: null, isLoading: false };
+    return { query: { value: '', valid: true }, page: 1, error: null, isLoading: false };
   },
   computed: {
     validForm(): boolean {
@@ -74,11 +76,17 @@ export default defineComponent({
       const form = { query: this.query.value };
       this.isLoading = true;
 
-      //   this.authenticate({ mode: this.mode, form })
-      //     .then(() => this.$router.replace((this.$route.query.redirect as string) || '/'))
-      //     .catch((e) => (this.error = e.message))
-      //     .finally(() => (this.isLoading = false));
-      this.isLoading = false;
+      axios
+        .get(`/search?q=${this.query}&page=${this.page}`)
+        .then(({ data }) => {
+          console.log(data);
+        })
+        .catch((e) => {
+          throw e.response.data.error || { message: 'UNKNOWN_ERROR' };
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
     handleError() {
       this.error = null;
