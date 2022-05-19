@@ -7,7 +7,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 public enum Database {
     INSTANCE;
@@ -36,16 +40,20 @@ public enum Database {
         }
     }
 
-    ResultSet query(String query) throws SQLException {
+    public <T> List<T> query(String query, Function<ResultSet, T> function) throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
-                Statement stmt = connection.createStatement()
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(query)
         ) {
-            return stmt.executeQuery(query);
+            List<T> results = new ArrayList<>();
+            while (rs.next())
+                results.add(function.apply(rs));
+            return results;
         }
     }
 
-    int update(String query) throws SQLException {
+    public int update(String query) throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement()
@@ -54,7 +62,7 @@ public enum Database {
         }
     }
 
-    int[] updateBatch(String[] queries) throws SQLException {
+    public int[] updateBatch(String[] queries) throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement()

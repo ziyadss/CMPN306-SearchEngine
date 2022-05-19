@@ -32,11 +32,10 @@ public class Filterer {
                                  .removeCss()
                                  .removeHtmlTags()
                                  .removeStopWords()
-                                 .removeWhiteSpace()
                                  .removeBigWords()
+                                 .removeWhiteSpace()
                                  .split()
                                  .map(Stemmer::stem)
-                                 .distinct()
                                  .filter((s) -> !s.equals("") && !s.equals(" "))
                                  .collect(Collectors.toList());
     }
@@ -47,18 +46,18 @@ public class Filterer {
     }
 
     private Filterer removeStopWords() {
-        this.text = stopWords.matcher(text).replaceAll("");
+        this.text = stopWords.matcher(text).replaceAll(" ");
         return this;
 
     }
 
     private Filterer removeHtmlTags() {
-        text = htmlTags.matcher(text).replaceAll("");
+        text = htmlTags.matcher(text).replaceAll(" ");
         return this;
     }
 
     private Filterer removeCss() {
-        text = css.matcher(text).replaceAll("");
+        text = css.matcher(text).replaceAll(" ");
         return this;
     }
 
@@ -68,12 +67,12 @@ public class Filterer {
     }
 
     private Filterer removeWhiteSpace() {
-        text = whiteSpace.matcher(text).replaceAll("");
+        text = whiteSpace.matcher(text).replaceAll(" ");
         return this;
     }
 
     private Filterer removeBigWords() {
-        text = bigWords.matcher(text).replaceAll("");
+        text = bigWords.matcher(text).replaceAll(" ");
         return this;
     }
 

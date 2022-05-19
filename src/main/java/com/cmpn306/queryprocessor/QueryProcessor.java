@@ -68,7 +68,7 @@ public class QueryProcessor extends HttpServlet {
         return new QueryItem(phrases, excluded, included, words);
     }
 
-    public static Stream<QueryResult> process(String query, int page) {
+    public static Stream<QueryResult> process(String query, int page, boolean lucky) {
         QueryItem tokens = tokenize(query);
 
         List<String> tokensList = Stream.of(tokens.included(), tokens.phrases(), tokens.words())
@@ -76,7 +76,7 @@ public class QueryProcessor extends HttpServlet {
                                         .distinct()
                                         .toList();
 
-        // TODO: search using the tokensList and the page number
+        // TODO: search using the tokensList and the page number and lucky
 
         QueryResult qr1 = new QueryResult("title1", "url1", "snippet1");
         QueryResult qr2 = new QueryResult("title2", "url2", "snippet2");
@@ -91,9 +91,11 @@ public class QueryProcessor extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String query  = request.getParameter("q");
         String page_s = request.getParameter("page");
+        boolean lucky = request.getParameter("lucky") != null;
+
         int    page   = page_s == null ? 1 : Integer.parseInt(page_s.trim().replaceAll("/$", ""));
 
-        Stream<QueryResult> results = process(query, page);
+        Stream<QueryResult> results = process(query, page, lucky);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
