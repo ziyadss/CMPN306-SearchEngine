@@ -2,6 +2,7 @@
 .idea/workspace.xml
 .idea/dataSources.local.xml
 .idea/dataSources/
+searchEngineDatabase.db
 
 .gradle
 build/

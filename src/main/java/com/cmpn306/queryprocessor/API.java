@@ -16,7 +16,6 @@ public class API {
         String        sql   = "SELECT COUNT(*) AS count FROM documents;";
         List<Integer> count = Database.query(sql, API::queryCount);
         Ranker.setTotalDocCount(count.get(0));
-        System.out.println("Total number of documents: " + Ranker.getTotalDocCount());
 
         Tomcat tomcat = new Tomcat();
 

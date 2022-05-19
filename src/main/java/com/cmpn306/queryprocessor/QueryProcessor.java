@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.regex.Matcher.quoteReplacement;
+
 @WebServlet(name = "QueryProcessor", urlPatterns = {"/search", "/search/"})
 public class QueryProcessor extends HttpServlet {
     private static final int     PAGE_ITEM_COUNT = 10;
@@ -109,7 +111,7 @@ public class QueryProcessor extends HttpServlet {
         for (String token: tokens.phrases()) {
 
             List<QueryPageResult> currentQueryResult = Database.query(
-                    "SELECT documents.pageRank, word_document.word, word_document.wordCount as wwc, documents.wordCount as dwc, documents.content, documents.pageTitle, documents.docUrl FROM word_document, documents WHERE word_document.content LIKE '%'" + token + "%' AND word_document.docUrl = documents.docUrl and indexTime > 0;",
+                    "SELECT documents.pageRank, word_document.word, word_document.wordCount as wwc, documents.wordCount as dwc, documents.content, documents.pageTitle, documents.docUrl FROM word_document, documents WHERE documents.content LIKE '%" + token + "%' AND word_document.docUrl = documents.docUrl and indexTime > 0;",
                     QueryProcessor::resultToQueryPageResult);
 
             currentQueryResult.removeIf(excludeMap::containsKey);
@@ -127,9 +129,6 @@ public class QueryProcessor extends HttpServlet {
                                                                      .reversed())
                                                    .map(QueryResult::new)
                                                    .toList();
-        System.out.println("Query results: " + queryResults.stream()
-                                                           .map(QueryResult::url)
-                                                           .collect(Collectors.joining(", ")));
 
         int               total;
         List<QueryResult> results;
@@ -180,11 +179,16 @@ public class QueryProcessor extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         try (PrintWriter out = response.getWriter()) {
-            Response res      = process(query, page, lucky);
-            String   elements = res.results().stream().map(QueryResult::toJson).collect(Collectors.joining(","));
-            String   tokens   = String.join("','", res.tokens());
-            String   json     = "{\"total\":%d,\"results\":[%s], \"tokens\":[\"%s\"]}";
+            Response res = process(query, page, lucky);
+            String elements = res.results()
+                                 .stream()
+                                 .map(QueryResult::toJson)
+                                 .collect(Collectors.joining(",", "[\"", "\"]"));
+            String tokens = res.tokens().stream().collect(Collectors.joining(",", "[\"", "\"]"));
+            String json   = "{\"total\":%d,\"results\":%s, \"tokens\":%s}";
             out.printf(json, res.total(), elements, tokens);
+            Database.update("INSERT OR IGNORE INTO query (text) VALUES ('" + query.replaceAll("\"",
+                                                                                              quoteReplacement("\"")) + "')");
         } catch (IOException | SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

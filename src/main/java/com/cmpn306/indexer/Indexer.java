@@ -55,7 +55,6 @@ public class Indexer {
                 String docs = documents.stream()
                                        .map(doc -> "'" + doc.docUrl + "'")
                                        .collect(Collectors.joining(", ", "(", ");"));
-                System.out.println(query + docs);
                 Database.update(query + docs);
             }
         }
