@@ -7,7 +7,6 @@ Advanced Programming Techniques Project - third year CUFE students.
 - Open project in IntelliJ IDEA
 - Configure and build the project with Gradle
 - Run the component needed via its class name
-- Run the web interface by running `npm i` then `npm run dev` from the `CMPN306-SearchEngine\src\main\javascript` directory
 
 ```sh
 gradle run run -Dexec.mainClass=com.cmpn306.package.class
@@ -19,6 +18,8 @@ gradle run run -Dexec.mainClass=com.cmpn306.package.class
 | Indexer   | com.cmpn306.indexer.Indexer    |
 | Ranker    | com.cmpn306.ranker.Ranker      |
 | API       | com.cmpn306.queryprocessor.API |
+
+- Run the web interface by running `npm i` then `npm run dev` from the `CMPN306-SearchEngine\src\main\javascript` directory
 
 ## Team Members:
 
