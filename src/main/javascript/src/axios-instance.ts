@@ -9,7 +9,6 @@ export function searchAPI(query: string, page = 1, lucky = false): Promise<Query
   return axiosSearch
     .get(`/search?q=${encodeURIComponent(query)}&page=${page}${lucky ? '&lucky' : ''}`)
     .then(({ data }) => {
-      console.log("searchAPI: ", data);
-      return { total: data.total, results: data.results, tokens:data.tokens };
+      return { total: data.total, results: data.results, tokens: data.tokens };
     });
 }

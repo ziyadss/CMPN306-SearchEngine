@@ -25,8 +25,6 @@
 
           <p v-if="!query.valid">Please enter a valid query.</p>
         </div>
-
-
       </form>
     </BaseCard>
 
@@ -38,21 +36,19 @@
 
       <div v-else class="results">
         <BaseCard v-for="result in results" :key="result.url">
-            <a :href="result.url">
+          <a :href="result.url">
             <h2>{{ ellipsize(result.title) }}</h2>
-            <h3>{{ellipsize(result.url)}}</h3>
-            </a>
+            <h3>{{ ellipsize(result.url) }}</h3>
+          </a>
           <p v-html="boldify(ellipsize(result.snippet, 150))"></p>
         </BaseCard>
       </div>
 
       <div class="page-slider">
-      <BaseButton v-if="page > 1" text="Previous" @click="previousPage" />
-      <BaseButton v-if="page < pageCount" text="Next" @click="nextPage" />
-    </div>
+        <BaseButton v-if="page > 1" text="Previous" @click="previousPage" />
+        <BaseButton v-if="page < pageCount" text="Next" @click="nextPage" />
+      </div>
     </BaseCard>
-
-    
   </div>
 </template>
 
@@ -85,25 +81,24 @@ export default defineComponent({
     }
   },
   methods: {
-      ellipsize(input:string, maxLength:number=35) {
-      if (input == null || input.length <= maxLength) 
-        return input;
-      
-      return input.substring(0, maxLength-3) + "...";
+    ellipsize(input: string, maxLength: number = 35) {
+      if (input == null || input.length <= maxLength) return input;
+
+      return input.substring(0, maxLength - 3) + '...';
     },
-      boldify(text: string): string {
-          return text.replace(new RegExp(`(${this.tokens.join('|')})`, 'gi'), '<b>$1</b>');
-      },
+    boldify(text: string): string {
+      return text.replace(new RegExp(`(${this.tokens.join('|')})`, 'gi'), '<b>$1</b>');
+    },
     nextPage() {
       this.$router.push({
-        query: { q: this.$route.query?.q?.toString(), page: this.page+1 }
+        query: { q: this.$route.query?.q?.toString(), page: this.page + 1 }
       });
       this.page++;
       this.search();
     },
     previousPage() {
       this.$router.push({
-        query: { q: this.$route.query?.q?.toString(), page: this.page-1 }
+        query: { q: this.$route.query?.q?.toString(), page: this.page - 1 }
       });
       this.page--;
       this.search();
@@ -164,8 +159,8 @@ form {
 
 .form-control {
   margin: 0.5rem 0;
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 label {
@@ -200,10 +195,9 @@ textarea:focus {
   justify-content: space-between;
 }
 
-.sole-button
-{
-    margin-top: 1rem;
-    margin-left: auto;
-    margin-right: auto;
+.sole-button {
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
