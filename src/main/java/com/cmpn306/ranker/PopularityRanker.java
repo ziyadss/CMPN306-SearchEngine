@@ -1,7 +1,10 @@
 package com.cmpn306.ranker;
 
+import com.cmpn306.database.Database;
 import com.cmpn306.database.WebGraph;
+import com.cmpn306.database.WebGraphNode;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
 
@@ -34,8 +37,17 @@ public class PopularityRanker {
             calculatePageRank();
             iterCount++;
         }
+        for (String node: webGraph.getDocs().keySet())
+            updatePageRankQuery(node,webGraph.getDocs().get(node).getPageRank());
 
     }
+
+    private void updatePageRankQuery(String node, double pageRank) throws SQLException {
+        String query = "UPDATE documents SET pageRank = " + pageRank +"WHERE docUrl=\""+ node +"\";";
+        Database.INSTANCE.update(query);
+    }
+
+
 
     void calculatePageRank() {
         setPageRankOld(webGraph);

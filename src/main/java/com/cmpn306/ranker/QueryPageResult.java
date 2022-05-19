@@ -2,6 +2,11 @@ package com.cmpn306.ranker;
 
 public class QueryPageResult {
 
+    private final double TFIDF_FACTOR = 1.0;
+    private final double PAGERANK_FACTOR = 1.0;
+    private final double HEADING_FACTOR = 1.0;
+    private final double LINK_FACTOR = 1.0;
+
     //Data members from the word_document table
     String word;
     String docUrl;
@@ -9,6 +14,7 @@ public class QueryPageResult {
     double tf;
     double idf;
     double tfIdf;
+    double pageRank;
 
     //Data members from the documents table
     int    docWordCount;
@@ -114,7 +120,7 @@ public class QueryPageResult {
     }
 
     public void calculateTf() {
-        setTf((double) wordCount / docWordCount); //TODO: add query to update value in table
+        setTf((double) wordCount / docWordCount);
     }
 
     public void calculateIdf(int totalDocCount, int refDocCount) {
@@ -129,6 +135,18 @@ public class QueryPageResult {
         calculateTf();
         calculateIdf(totalDocCount, refDocCount);
         calculateTfIdf();
-        setRelevanceScore(tfIdf + 0 * 1.0); //TODO: Add other scores multiplied by factors to give final relevance score
+        double relevanceScoreCalc =tfIdf*TFIDF_FACTOR+
+                                    pageRank*PAGERANK_FACTOR +
+                                    isInHeading()*HEADING_FACTOR+
+                                    isInLink()*LINK_FACTOR;
+        setRelevanceScore(relevanceScoreCalc);
+    }
+
+    private double isInLink() {
+        return 0;
+    }
+
+    private double isInHeading() {
+        return 0;
     }
 }
