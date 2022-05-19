@@ -7,7 +7,8 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 
 public class PopularityRanker {
-
+    private final double DAMPENING_FACTOR = 0.85;
+    private final double ERROR_TOLERANCE = 1.0e-6;
     PopularityRanker() {
 
     }

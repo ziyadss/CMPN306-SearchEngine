@@ -20,6 +20,20 @@ public class WebGraph {
         docs = documents;
     }
 
-    public void getDocumentsLinks() {
+    public void getDocumentsLinks() throws SQLException {
+        String                         query     = "SELECT srcDocUrl, dstDocUrl FROM web_graph " ;
+                // "SELECT srcDocUrl,d1.pageRank as srcPageRank, d2.pageRank,dstDocUrl AS dstPageRank FROM web_graph"+
+                //                                    "JOIN documents AS d1 ON web_graph.srcDocUrl = d1.docUrl" +
+                //                                    "JOIN documents AS d2 ON web_graph.dstDocUrl = d2.docUrl";
+        ResultSet                      rs        = Database.INSTANCE.query(query);
+        while(rs.next()){
+            String srcDocUrl = rs.getString("srcDocUrl");
+            String dstDocUrl = rs.getString("dstDocUrl");
+            docs.get(srcDocUrl).outGoingUrls.put(dstDocUrl,docs.get(dstDocUrl));
+        }
+    }
+
+    public void generateAdjacencyMatrix(){
+
     }
 }

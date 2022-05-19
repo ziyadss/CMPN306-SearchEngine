@@ -5,7 +5,7 @@ import java.util.Hashtable;
 public class WebGraphNode {
     String docUrl;
     float pageRank;
-    Hashtable<String,WebGraph> outGoingUrls;
+    Hashtable<String,WebGraphNode> outGoingUrls;
     public WebGraphNode(String docUrl,float pageRank){
         this.docUrl = docUrl;
         this.pageRank = pageRank;
