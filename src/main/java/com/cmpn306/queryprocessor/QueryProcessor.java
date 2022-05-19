@@ -33,44 +33,40 @@ public class QueryProcessor extends HttpServlet {
     }
 
     private static QueryItem tokenize(String query) {
-        Matcher phraseMatcher = PHRASE.matcher(query);
-        List<String> phrases = phraseMatcher.results()
-                                            .map(QueryProcessor::processMatch)
-                                            .filter(s -> !s.isBlank())
-                                            .distinct()
-                                            .toList();
+        Matcher phraseMatcher = PHRASE.matcher(query); List<String> phrases = phraseMatcher.results()
+                                                                                           .map(QueryProcessor::processMatch)
+                                                                                           .filter(s -> !s.isBlank())
+                                                                                           .distinct()
+                                                                                           .toList();
         query = phraseMatcher.replaceAll("");
 
-        Matcher excludedMatcher = EXCLUDED.matcher(query);
-        List<String> excluded = excludedMatcher.results()
-                                               .map(QueryProcessor::processMatch)
-                                               .map(Stemmer::stem)
-                                               .filter(s -> !s.isBlank())
-                                               .distinct()
-                                               .toList();
+        Matcher excludedMatcher = EXCLUDED.matcher(query); List<String> excluded = excludedMatcher.results()
+                                                                                                  .map(QueryProcessor::processMatch)
+                                                                                                  .map(Stemmer::stem)
+                                                                                                  .filter(s -> !s.isBlank())
+                                                                                                  .distinct()
+                                                                                                  .toList();
         query = excludedMatcher.replaceAll("");
 
-        Matcher includedMatcher = INCLUDED.matcher(query);
-        List<String> included = includedMatcher.results()
-                                               .map(QueryProcessor::processMatch)
-                                               .map(Stemmer::stem)
-                                               .filter(s -> !s.isBlank())
-                                               .distinct()
-                                               .toList();
+        Matcher includedMatcher = INCLUDED.matcher(query); List<String> included = includedMatcher.results()
+                                                                                                  .map(QueryProcessor::processMatch)
+                                                                                                  .map(Stemmer::stem)
+                                                                                                  .filter(s -> !s.isBlank())
+                                                                                                  .distinct()
+                                                                                                  .toList();
         query = includedMatcher.replaceAll("");
 
-        Matcher wordMatcher = WORD.matcher(query);
-        List<String> words = wordMatcher.results()
-                                        .map(QueryProcessor::processMatch)
-                                        .map(Stemmer::stem)
-                                        .filter(s -> !s.isBlank())
-                                        .distinct()
-                                        .toList();
+        Matcher wordMatcher = WORD.matcher(query); List<String> words = wordMatcher.results()
+                                                                                   .map(QueryProcessor::processMatch)
+                                                                                   .map(Stemmer::stem)
+                                                                                   .filter(s -> !s.isBlank())
+                                                                                   .distinct()
+                                                                                   .toList();
 
         return new QueryItem(phrases, excluded, included, words);
     }
 
-    public static Stream<QueryResult> process(String query, int page, boolean lucky) throws SQLException {
+    public static List<QueryResult> process(String query, int page, boolean lucky) throws SQLException {
         QueryItem tokens = tokenize(query);
 
         List<String> tokensList = Stream.of(tokens.included(), tokens.phrases(), tokens.words())
@@ -80,93 +76,90 @@ public class QueryProcessor extends HttpServlet {
 
         // TODO: search using the tokensList and the page number and lucky
         //formulate queries from token list, and then send them to the
-        List<QueryResult> queryResults  = new ArrayList<QueryResult>();
-        HashMap<String, List<QueryPageResult>>  resultsMap    = null;
-        HashMap<QueryPageResult, Boolean> excludeMap = new HashMap<QueryPageResult, Boolean>();
-        HashMap<QueryPageResult, Boolean> includeMap = new HashMap<QueryPageResult, Boolean>();
+        List<QueryResult>                      queryResults = new ArrayList<QueryResult>();
+        HashMap<String, List<QueryPageResult>> resultsMap   = null;
+        HashMap<QueryPageResult, Boolean>      excludeMap   = new HashMap<QueryPageResult, Boolean>();
+        HashMap<QueryPageResult, Boolean>      includeMap   = new HashMap<QueryPageResult, Boolean>();
         //for every token, search up the index and return the query results
 
-        for (String token : tokens.excluded()) {
+        for (String token: tokens.excluded()) {
 
-            List<QueryPageResult> currentQueryResult = Database.INSTANCE.query(
-                    "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.word = '" + token + "' AND word_document.docUrl = documents.docUrl", QueryProcessor::resultToQueryPageResult);
+            List<QueryPageResult> currentQueryResult = Database.query(
+                    "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.word = '" + token + "' AND word_document.docUrl = documents.docUrl",
+                    QueryProcessor::resultToQueryPageResult);
 
-            for (QueryPageResult queryPageResult : currentQueryResult)
+            for (QueryPageResult queryPageResult: currentQueryResult)
                 excludeMap.put(queryPageResult, true);
         }
 
-        for (String token : tokens.included()) {
+        for (String token: tokens.included()) {
 
-            List<QueryPageResult> currentQueryResult = Database.INSTANCE.query(
-                    "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.word = '" + token + "' AND word_document.docUrl = documents.docUrl", QueryProcessor::resultToQueryPageResult);
+            List<QueryPageResult> currentQueryResult = Database.query(
+                    "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.word = '" + token + "' AND word_document.docUrl = documents.docUrl",
+                    QueryProcessor::resultToQueryPageResult);
 
-            for (QueryPageResult queryPageResult : currentQueryResult)
+            for (QueryPageResult queryPageResult: currentQueryResult)
                 includeMap.put(queryPageResult, true);
         }
 
         //need to join documents --> word_document
-		if (!lucky){
-        	for (String token : tokens.words()) {
-                List<QueryPageResult> currentQueryResult = Database.INSTANCE.query(
-                        "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.word = '" + token + "' AND word_document.docUrl = documents.docUrl", QueryProcessor::resultToQueryPageResult);
+        for (String token: tokens.words()) {
+            List<QueryPageResult> currentQueryResult = Database.query(
+                    "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.word = '" + token + "' AND word_document.docUrl = documents.docUrl",
+                    QueryProcessor::resultToQueryPageResult);
 
-               currentQueryResult.removeIf(excludeMap::containsKey);
-                assert resultsMap != null;
-                resultsMap.put(token, currentQueryResult);
-        	}
+            currentQueryResult.removeIf(excludeMap::containsKey); assert resultsMap != null;
+            resultsMap.put(token, currentQueryResult);
+        }
 
-            for (String token : tokens.phrases()) {
+        for (String token: tokens.phrases()) {
 
-                List<QueryPageResult> currentQueryResult = Database.INSTANCE.query(
-                        "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.content LIKE '%'" + token + "%' AND word_document.docUrl = documents.docUrl", QueryProcessor::resultToQueryPageResult);
+            List<QueryPageResult> currentQueryResult = Database.query(
+                    "SELECT documents.word, word_document.wordCount, documents.wordCount, documents.content, documents.pageTitle, documents.pageTitle FROM word_document, documents WHERE word_document.content LIKE '%'" + token + "%' AND word_document.docUrl = documents.docUrl",
+                    QueryProcessor::resultToQueryPageResult);
 
-                currentQueryResult.removeIf(excludeMap::containsKey);
-                if (!includeMap.isEmpty())
-                    currentQueryResult.removeIf(queryPageResult -> !includeMap.containsKey(queryPageResult));
-                assert resultsMap != null;
-                resultsMap.put(token, currentQueryResult);
+            currentQueryResult.removeIf(excludeMap::containsKey); if (!includeMap.isEmpty())
+                currentQueryResult.removeIf(queryPageResult -> !includeMap.containsKey(queryPageResult));
+            assert resultsMap != null; resultsMap.put(token, currentQueryResult);
+        }
+
+        List<QueryResult> results = new ArrayList<QueryResult>();
+
+        assert resultsMap != null; for (Map.Entry<String, List<QueryPageResult>> entry: resultsMap.entrySet()) {
+            for (QueryPageResult queryPageResult: entry.getValue()) {
+                results.add(new QueryResult(queryPageResult.getTitle(),
+                                            queryPageResult.getDocUrl(),
+                                            queryPageResult.getSnippet(entry.getKey())));
             }
+        }
 
-//			Stream<QueryResult> results = Stream.of(queryResults);
-            List<QueryResult> results = new ArrayList<QueryResult>();
-            assert resultsMap != null;
-            for (Map.Entry<String, List<QueryPageResult>> entry: resultsMap.entrySet()) {
-
-            }
-
-
-
-
-		}
-
-        QueryResult qr1 = new QueryResult("title1", "url1", "snippet1");
-        QueryResult qr2 = new QueryResult("title2", "url2", "snippet2");
-
-        Stream<QueryResult>                    results    = Stream.of(qr1, qr2);
-        //        Ranker.rank(resultsMap);
+        if (lucky) return Collections.singletonList(results.get(0));
 
         return results;
+
+
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String  query  = request.getParameter("q");
-        String  page_s = request.getParameter("page");
-        boolean lucky  = request.getParameter("lucky") != null;
+        String  query = request.getParameter("q"); String page_s = request.getParameter("page");
+        boolean lucky = request.getParameter("lucky") != null;
 
         int page = page_s == null ? 1 : Integer.parseInt(page_s.trim().replaceAll("/$", ""));
 
-//        Stream<QueryResult> results = process(query, page, lucky);
+        List<QueryResult> results = null;
+        try {
+            results = process(query, page, lucky);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json"); response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET");
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader("Access-Control-Allow-Methods", "GET"); response.setStatus(HttpServletResponse.SC_OK);
 
         try (PrintWriter out = response.getWriter()) {
             String elements = results.map(QueryResult::toJson).collect(Collectors.joining(","));
-            String json     = "{\"total\":%d,\"results\":[%s]}";
-            out.printf(json, 0, elements);
+            String json     = "{\"total\":%d,\"results\":[%s]}"; out.printf(json, 0, elements);
         } catch (IOException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -182,7 +175,13 @@ public class QueryProcessor extends HttpServlet {
 
     private static QueryPageResult resultToQueryPageResult(ResultSet result) {
         try {
-            return new QueryPageResult(result.getString("word_document.word"), result.getString("word_document.docUrl"),result.getInt("word_document.wordCount"), result.getInt("documents.wordCount"), result.getString("documents.content"), result.getString("documents.pageTitle"), result.getDouble("documents.pageRank"));
+            return new QueryPageResult(result.getString("word_document.word"),
+                                       result.getString("word_document.docUrl"),
+                                       result.getInt("word_document.wordCount"),
+                                       result.getInt("documents.wordCount"),
+                                       result.getString("documents.content"),
+                                       result.getString("documents.pageTitle"),
+                                       result.getDouble("documents.pageRank"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
