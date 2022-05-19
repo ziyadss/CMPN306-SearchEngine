@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import com.cmpn306.database.Database;
 
 public class DocumentsTable {
 
@@ -17,6 +16,8 @@ public class DocumentsTable {
             }
         }
     }
+
+
 
     public List<Document> getIndexable(Integer limit) throws SQLException {
         String query = "SELECT docUrl, content, timeCurrent, pageRank, pageTitle FROM documents WHERE indexTime < timeCurrent limit " + limit;
