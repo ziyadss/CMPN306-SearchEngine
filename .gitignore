@@ -3,6 +3,7 @@
 .idea/dataSources.local.xml
 .idea/dataSources/
 searchEngineDatabase.db
+searchEngineDatabase.db-journal
 
 .gradle
 build/
