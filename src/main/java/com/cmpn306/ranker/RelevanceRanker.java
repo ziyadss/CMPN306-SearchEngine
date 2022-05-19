@@ -6,19 +6,11 @@ import java.util.*;
 
 public class RelevanceRanker {
 
-    int totalDocCount;
 
     public RelevanceRanker() {
 
     }
 
-    public int getTotalDocCount() {
-        return totalDocCount;
-    }
-
-    public void setTotalDocCount(int totalDocCount) {
-        this.totalDocCount = totalDocCount;
-    }
 
     public void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
 
@@ -29,7 +21,7 @@ public class RelevanceRanker {
             Iterator<QueryPageResult> itList      = docList.iterator();
             while (itList.hasNext()) {
                 QueryPageResult page = itList.next();
-                page.calculateRelevance(totalDocCount, refDocCount);
+                page.calculateRelevance(Ranker.getTotalDocCount(), refDocCount);
                 if (!docs.containsKey(page.getDocUrl())) {
                     docs.put(page.getDocUrl(), page);
                 }

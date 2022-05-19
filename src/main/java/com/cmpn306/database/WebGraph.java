@@ -1,11 +1,18 @@
 package com.cmpn306.database;
 
+import com.cmpn306.ranker.Ranker;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
 
 public class WebGraph {
     Hashtable<String, WebGraphNode> docs = new Hashtable<>();
+
+    public Hashtable<String, WebGraphNode> getDocs() {
+        return docs;
+    }
+
 
     public void getDocumentsUrl() throws SQLException {
         String                          query = "SELECT docUrl, pageRank FROM documents";
@@ -14,8 +21,8 @@ public class WebGraph {
             documents = new Hashtable<>();
             while (rs.next()) {
                 String       docUrl   = rs.getString("docUrl");
-                double       pageRank = rs.getDouble("pageRank");
-                WebGraphNode tmp_node = new WebGraphNode(docUrl, pageRank);
+                //double       pageRank = rs.getDouble("pageRank");
+                WebGraphNode tmp_node = new WebGraphNode(docUrl, 1.0/ Ranker.getTotalDocCount());
                 documents.put(tmp_node.getDocUrl(), tmp_node);
             }
         }
@@ -34,9 +41,5 @@ public class WebGraph {
                 docs.get(srcDocUrl).outGoingUrls.put(dstDocUrl, docs.get(dstDocUrl));
             }
         }
-    }
-
-    public void generateAdjacencyMatrix() {
-
     }
 }
