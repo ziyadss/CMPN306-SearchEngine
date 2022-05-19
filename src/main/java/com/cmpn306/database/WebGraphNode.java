@@ -12,6 +12,7 @@ public class WebGraphNode {
         this.pageRank = pageRank;
     }
 
+
     public String getDocUrl() {
         return docUrl;
     }
@@ -20,4 +21,15 @@ public class WebGraphNode {
         this.docUrl = docUrl;
     }
 
+    public Hashtable<String, WebGraphNode> getOutGoingUrls() {
+        return outGoingUrls;
+    }
+
+    public double getPageRank() {
+        return pageRank;
+    }
+
+    public void setPageRank(double pageRank) {
+        this.pageRank = pageRank;
+    }
 }

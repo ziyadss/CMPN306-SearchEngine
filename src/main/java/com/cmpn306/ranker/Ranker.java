@@ -1,5 +1,6 @@
 package com.cmpn306.ranker;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -7,19 +8,18 @@ public class Ranker {
 
     private static final PopularityRanker popularityRanker = new PopularityRanker();
     private static final RelevanceRanker  relevanceRanker  = new RelevanceRanker();
-    int totalDocCount;
+    static int totalDocCount;
 
     public Ranker() {
 
     }
 
-    public int getTotalDocCount() {
+    public static int getTotalDocCount() {
         return totalDocCount;
     }
 
     public void setTotalDocCount(int totalDocCount) {
         this.totalDocCount = totalDocCount;
-        relevanceRanker.setTotalDocCount(this.totalDocCount);
     }
 
     public static void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
@@ -27,7 +27,7 @@ public class Ranker {
         relevanceRanker.rank(resultsMap);
     }
 
-    void calculatePageRank() {
-        popularityRanker.calculatePageRank();
+    void calculatePageRank() throws SQLException {
+        popularityRanker.pageRank();
     }
 }
