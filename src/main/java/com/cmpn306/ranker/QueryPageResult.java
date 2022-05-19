@@ -34,68 +34,20 @@ public class QueryPageResult {
         this.pageRank     = pageRank;
     }
 
-    public String getWord() {
-        return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
-    }
-
     public String getDocUrl() {
         return docUrl;
-    }
-
-    public void setDocUrl(String docUrl) {
-        this.docUrl = docUrl;
-    }
-
-    public int getWordCount() {
-        return wordCount;
-    }
-
-    public void setWordCount(int wordCount) {
-        this.wordCount = wordCount;
-    }
-
-    public double getTf() {
-        return tf;
     }
 
     public void setTf(double tf) {
         this.tf = tf;
     }
 
-    public double getIdf() {
-        return idf;
-    }
-
     public void setIdf(double idf) {
         this.idf = idf;
     }
 
-    public double getTfIdf() {
-        return tfIdf;
-    }
-
     public void setTfIdf(double tfIdf) {
         this.tfIdf = tfIdf;
-    }
-
-    public int getDocWordCount() {
-        return docWordCount;
-    }
-
-    public void setDocWordCount(int docWordCount) {
-        this.docWordCount = docWordCount;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public String getTitle() {

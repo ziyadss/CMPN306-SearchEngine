@@ -35,7 +35,6 @@ package com.cmpn306.util;
 */
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
@@ -72,52 +71,53 @@ public class Stemmer {
         Stemmer s = new Stemmer();
         for (String arg: args)
             try {
-                FileInputStream in = new FileInputStream(arg);
+                try (FileInputStream in = new FileInputStream(arg)) {
 
-                try {
-                    while (true) {
-                        int ch = in.read();
-                        if (Character.isLetter((char) ch)) {
-                            int j = 0;
-                            while (true) {
-                                ch   = Character.toLowerCase((char) ch);
-                                w[j] = (char) ch;
-                                if (j < 500)
-                                    j++;
-                                ch = in.read();
-                                if (!Character.isLetter((char) ch)) {
-                                    /* to test add(char ch) */
-                                    for (int c = 0; c < j; c++)
-                                         s.add(w[c]);
+                    try {
+                        while (true) {
+                            int ch = in.read();
+                            if (Character.isLetter((char) ch)) {
+                                int j = 0;
+                                while (true) {
+                                    ch   = Character.toLowerCase((char) ch);
+                                    w[j] = (char) ch;
+                                    if (j < 500)
+                                        j++;
+                                    ch = in.read();
+                                    if (!Character.isLetter((char) ch)) {
+                                        /* to test add(char ch) */
+                                        for (int c = 0; c < j; c++)
+                                             s.add(w[c]);
 
-                                    /* or, to test add(char[] w, int j) */
-                                    /* s.add(w, j); */
+                                        /* or, to test add(char[] w, int j) */
+                                        /* s.add(w, j); */
 
-                                    s.stem();
-                                    {
-                                        String u;
+                                        s.stem();
+                                        {
+                                            String u;
 
-                                        /* and now, to test toString() : */
-                                        u = s.toString();
+                                            /* and now, to test toString() : */
+                                            u = s.toString();
 
-                                        /* to test getResultBuffer(), getResultLength() : */
-                                        /* u = new String(s.getResultBuffer(), 0, s.getResultLength()); */
+                                            /* to test getResultBuffer(), getResultLength() : */
+                                            /* u = new String(s.getResultBuffer(), 0, s.getResultLength()); */
 
-                                        System.out.print(u);
+                                            System.out.print(u);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
+                            if (ch < 0)
+                                break;
+                            System.out.print((char) ch);
                         }
-                        if (ch < 0)
-                            break;
-                        System.out.print((char) ch);
+                    } catch (IOException e) {
+                        System.out.println("error reading " + arg);
+                        break;
                     }
-                } catch (IOException e) {
-                    System.out.println("error reading " + arg);
-                    break;
                 }
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 System.out.println("file " + arg + " not found");
                 break;
             }
@@ -206,7 +206,7 @@ public class Stemmer {
 
     /* doublec(j) is true <=> j,(j-1) contain a double consonant. */
 
-    private final int m() {
+    private int m() {
         int n = 0;
         int i = 0;
         while (true) {
@@ -247,7 +247,7 @@ public class Stemmer {
 
    */
 
-    private final boolean vowelinstem() {
+    private boolean vowelinstem() {
         int i;
         for (i = 0; i <= j; i++)
             if (!cons(i))
@@ -321,7 +321,7 @@ public class Stemmer {
 
     /* step2() turns terminal y to i when there is another vowel in the stem. */
 
-    private final void r(String s) {
+    private void r(String s) {
         if (m() > 0)
             setto(s);
     }
@@ -330,7 +330,7 @@ public class Stemmer {
       -ation) maps to -ize etc. note that the string before the suffix must give
       m() > 0. */
 
-    private final void step1() {
+    private void step1() {
         if (b[k] == 's') {
             if (ends("sses"))
                 k -= 2;
@@ -366,14 +366,14 @@ public class Stemmer {
 
     /* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
 
-    private final void step2() {
+    private void step2() {
         if (ends("y") && vowelinstem())
             b[k] = 'i';
     }
 
     /* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
 
-    private final void step3() {
+    private void step3() {
         if (k == 0)
             return; /* For Bug 1 */
         switch (b[k - 1]) {
@@ -481,7 +481,7 @@ public class Stemmer {
 
     /* step6() removes a final -e if m() > 1. */
 
-    private final void step4() {
+    private void step4() {
         switch (b[k]) {
             case 'e':
                 if (ends("icate")) {
@@ -522,7 +522,7 @@ public class Stemmer {
         }
     }
 
-    private final void step5() {
+    private void step5() {
         if (k == 0)
             return; /* for Bug 1 */
         switch (b[k - 1]) {
@@ -598,7 +598,7 @@ public class Stemmer {
             k = j;
     }
 
-    private final void step6() {
+    private void step6() {
         j = k;
         if (b[k] == 'e') {
             int a = m();

@@ -204,11 +204,7 @@ public class Scraper {
         try {
 
             //Document htmlDocument = Jsoup.connect(url).get();
-            Document htmlDocx   = Jsoup.connect(url)
-                                       .timeout(600000)
-                                       .ignoreContentType(true)
-                                       .ignoreHttpErrors(true)
-                                       .get();
+            Document htmlDocx = Jsoup.connect(url).timeout(600000).ignoreContentType(true).ignoreHttpErrors(true).get();
             Elements hyperLinks = htmlDocx.select("a[href]");
             for (Element link: hyperLinks) {
                 this.Links.add(link.absUrl("href"));

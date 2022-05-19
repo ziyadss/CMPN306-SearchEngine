@@ -3,7 +3,6 @@ package com.cmpn306.database;
 import org.sqlite.SQLiteDataSource;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
