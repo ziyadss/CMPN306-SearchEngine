@@ -42,7 +42,7 @@ public class QuerySuggestor extends HttpServlet {
             List<String> results = suggestions(query);
             String elements = results.stream()
                                      .map(s -> s.replace("\"", "\\\""))
-                                     .collect(Collectors.joining(",", "[\"", "\"]"));
+                                     .collect(Collectors.joining("\",\"", "[\"", "\"]"));
             String json = "{\"suggestions\":%s}";
             out.printf(json, elements);
         } catch (IOException | SQLException e) {
