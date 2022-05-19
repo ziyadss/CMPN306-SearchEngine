@@ -55,7 +55,7 @@ public class Indexer {
                 String docs = documents.stream()
                                        .map(doc -> "'" + doc.docUrl + "'")
                                        .collect(Collectors.joining(", ", "(", ");"));
-
+                System.out.println(query + docs);
                 Database.update(query + docs);
             }
         }
@@ -77,9 +77,6 @@ public class Indexer {
 
                     Map<String, Long> wordFreq = new HashMap<>();
                     words.forEach(word -> wordFreq.merge(word, 1L, Long::sum));
-                    System.out.println("Here");
-                    // print all k,v pairs
-                    wordFreq.forEach((word, freq) -> System.out.println(word + " -> " + freq));
                     if (wordFreq.size() > 0) {
                         try {
                             WordsTable.insertWords(wordFreq, document.docUrl());

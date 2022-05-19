@@ -17,7 +17,7 @@ public class RelevanceRanker {
             Iterator<QueryPageResult> itList      = docList.iterator();
             while (itList.hasNext()) {
                 QueryPageResult page = itList.next();
-                page.calculateRelevance(Ranker.getTotalDocCount(), refDocCount);
+                page.calculateRelevance(refDocCount);
                 if (!docs.containsKey(page.getDocUrl())) {
                     docs.put(page.getDocUrl(), page);
                 }

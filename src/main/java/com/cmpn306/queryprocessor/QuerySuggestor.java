@@ -15,13 +15,9 @@ import java.util.List;
 @WebServlet(name = "QuerySuggestor", urlPatterns = {"/suggest", "/suggest/"})
 public class QuerySuggestor extends HttpServlet {
 
-    private static List<String> suggestions(String q) {
+    private static List<String> suggestions(String q) throws SQLException {
         String query = "SELECT word FROM words WHERE word LIKE '" + q + "%'";
-        try {
-            return Database.query(query, QuerySuggestor::getWord);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return Database.query(query, QuerySuggestor::getWord);
 
     }
 
@@ -36,8 +32,6 @@ public class QuerySuggestor extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String query = request.getParameter("q");
 
-        List<String> results = suggestions(query);
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -45,10 +39,11 @@ public class QuerySuggestor extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         try (PrintWriter out = response.getWriter()) {
-            String elements = String.join("',", results);
-            String json     = "{\"suggestions\":['%s']}";
+            List<String> results  = suggestions(query);
+            String       elements = String.join("',", results);
+            String       json     = "{\"suggestions\":['%s']}";
             out.printf(json, elements);
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

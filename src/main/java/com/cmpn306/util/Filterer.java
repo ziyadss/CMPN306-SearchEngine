@@ -23,16 +23,13 @@ public class Filterer {
         this.text = text;
     }
 
-    public static String rawText(String html) {
-        return new Filterer(html).removeCss().removeHtmlTags().removeWhiteSpace().removeNonWords().text.trim();
-    }
-
     public static List<String> getKeyWords(String html) {
         return new Filterer(html).toLower()
                                  .removeCss()
                                  .removeHtmlTags()
                                  .removeStopWords()
                                  .removeBigWords()
+                                 .removeNonWords()
                                  .removeWhiteSpace()
                                  .split()
                                  .map(Stemmer::stem)

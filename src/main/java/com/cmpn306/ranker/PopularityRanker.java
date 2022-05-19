@@ -9,7 +9,7 @@ import java.util.Hashtable;
 public class PopularityRanker {
     private final double DAMPENING_FACTOR = 0.85;
     private final double ERROR_TOLERANCE  = 1.0e-6;
-    private final int    MAX_ITERATIONS   = 15;
+    private final int    MAX_ITERATIONS   = 5;
     WebGraph                  webGraph;
     double                    offset;
     Hashtable<String, Double> pageRankOld;
@@ -41,7 +41,7 @@ public class PopularityRanker {
     }
 
     private void updatePageRankQuery(String node, double pageRank) throws SQLException {
-        String query = "UPDATE documents SET pageRank = " + pageRank + "WHERE docUrl=\"" + node + "\";";
+        String query = "UPDATE documents SET pageRank = " + pageRank + " WHERE docUrl=\"" + node + "\";";
         Database.update(query);
     }
 
@@ -61,7 +61,7 @@ public class PopularityRanker {
     }
 
     private void setPageRankOld(WebGraph webGraph) {
-        pageRankOld = new Hashtable<String, Double>();
+        pageRankOld = new Hashtable<>();
         for (String node: webGraph.getDocs().keySet())
             pageRankOld.put(webGraph.getDocs().get(node).getDocUrl(), webGraph.getDocs().get(node).getPageRank());
     }

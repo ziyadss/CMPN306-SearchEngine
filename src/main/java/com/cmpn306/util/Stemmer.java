@@ -70,9 +70,9 @@ public class Stemmer {
     public static void main(String[] args) {
         char[]  w = new char[501];
         Stemmer s = new Stemmer();
-        for (int i = 0; i < args.length; i++)
+        for (String arg: args)
             try {
-                FileInputStream in = new FileInputStream(args[i]);
+                FileInputStream in = new FileInputStream(arg);
 
                 try {
                     while (true) {
@@ -114,11 +114,11 @@ public class Stemmer {
                         System.out.print((char) ch);
                     }
                 } catch (IOException e) {
-                    System.out.println("error reading " + args[i]);
+                    System.out.println("error reading " + arg);
                     break;
                 }
             } catch (FileNotFoundException e) {
-                System.out.println("file " + args[i] + " not found");
+                System.out.println("file " + arg + " not found");
                 break;
             }
     }
@@ -139,8 +139,7 @@ public class Stemmer {
     public void add(char ch) {
         if (i == b.length) {
             char[] new_b = new char[i + INC];
-            for (int c = 0; c < i; c++)
-                 new_b[c] = b[c];
+            System.arraycopy(b, 0, new_b, 0, i);
             b = new_b;
         }
         b[i++] = ch;
@@ -155,8 +154,8 @@ public class Stemmer {
     public void add(char[] w, int wLen) {
         if (i + wLen >= b.length) {
             char[] new_b = new char[i + wLen + INC];
-            for (int c = 0; c < i; c++)
-                 new_b[c] = b[c];
+            if (i >= 0)
+                System.arraycopy(b, 0, new_b, 0, i);
             b = new_b;
         }
         for (int c = 0; c < wLen; c++)
@@ -197,19 +196,12 @@ public class Stemmer {
 
     /* vowelinstem() is true <=> 0,...j contains a vowel */
 
-    private final boolean cons(int i) {
-        switch (b[i]) {
-            case 'a':
-            case 'e':
-            case 'i':
-            case 'o':
-            case 'u':
-                return false;
-            case 'y':
-                return i == 0 || !cons(i - 1);
-            default:
-                return true;
-        }
+    private boolean cons(int i) {
+        return switch (b[i]) {
+            case 'a', 'e', 'i', 'o', 'u' -> false;
+            case 'y' -> i == 0 || !cons(i - 1);
+            default -> true;
+        };
     }
 
     /* doublec(j) is true <=> j,(j-1) contain a double consonant. */
@@ -263,7 +255,7 @@ public class Stemmer {
         return false;
     }
 
-    private final boolean doublec(int j) {
+    private boolean doublec(int j) {
         if (j < 1)
             return false;
         if (b[j] != b[j - 1])
@@ -274,7 +266,7 @@ public class Stemmer {
    /* setto(s) sets (j+1),...k to the characters in the string s, readjusting
       k. */
 
-    private final boolean cvc(int i) {
+    private boolean cvc(int i) {
         if (i < 2 || !cons(i) || cons(i - 1) || !cons(i - 2))
             return false;
         {
@@ -285,7 +277,7 @@ public class Stemmer {
 
     /* r(s) is used further down. */
 
-    private final boolean ends(String s) {
+    private boolean ends(String s) {
         int l = s.length();
         int o = k - l + 1;
         if (o < 0)
@@ -319,7 +311,7 @@ public class Stemmer {
 
    */
 
-    private final void setto(String s) {
+    private void setto(String s) {
         int l = s.length();
         int o = j + 1;
         for (int i = 0; i < l; i++)

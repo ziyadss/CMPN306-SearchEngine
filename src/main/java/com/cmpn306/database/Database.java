@@ -3,6 +3,7 @@ package com.cmpn306.database;
 import org.sqlite.SQLiteDataSource;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,6 +48,10 @@ public class Database {
             while (rs.next())
                 results.add(function.apply(rs));
             return results;
+        } catch (SQLException e) {
+            System.out.println(query);
+            System.out.println(e.getMessage());
+            throw e;
         }
     }
 
@@ -56,6 +61,10 @@ public class Database {
                 Statement stmt = connection.createStatement()
         ) {
             return stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            System.out.println(query);
+            System.out.println(e.getMessage());
+            throw e;
         }
     }
 
@@ -67,6 +76,10 @@ public class Database {
             for (String query: queries)
                 stmt.addBatch(query);
             return stmt.executeBatch();
+        } catch (SQLException e) {
+            System.out.println(Arrays.toString(queries));
+            System.out.println(e.getMessage());
+            throw e;
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.cmpn306.ranker;
 
+import com.cmpn306.database.Database;
+import com.cmpn306.queryprocessor.API;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -10,15 +13,18 @@ public class Ranker {
     private static final RelevanceRanker  relevanceRanker  = new RelevanceRanker();
     static               int              totalDocCount;
 
-    public Ranker() {
-
+    public static void main(String[] args) throws SQLException {
+        String        sql   = "SELECT COUNT(*) AS count FROM documents;";
+        List<Integer> count = Database.query(sql, API::queryCount);
+        Ranker.setTotalDocCount(count.get(0));
+        Ranker.calculatePageRank();
     }
 
     public static int getTotalDocCount() {
         return totalDocCount;
     }
 
-    public void setTotalDocCount(int totalDocCount) {
+    static public void setTotalDocCount(int totalDocCount) {
         Ranker.totalDocCount = totalDocCount;
     }
 
@@ -27,7 +33,11 @@ public class Ranker {
         relevanceRanker.rank(resultsMap);
     }
 
-    void calculatePageRank() throws SQLException {
-        popularityRanker.pageRank();
+    public static void calculatePageRank() {
+        try {
+            popularityRanker.pageRank();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

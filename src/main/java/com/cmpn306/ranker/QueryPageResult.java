@@ -18,8 +18,8 @@ public class QueryPageResult {
 
     //Data members from the documents table
     int    docWordCount;
-    String    content;
-    String    title;
+    String content;
+    String title;
     double relevanceScore;
 
     public QueryPageResult(
@@ -32,10 +32,6 @@ public class QueryPageResult {
         this.content      = content;
         this.title        = title;
         this.pageRank     = pageRank;
-    }
-
-    public QueryPageResult() {
-
     }
 
     public String getWord() {
@@ -106,20 +102,12 @@ public class QueryPageResult {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public double getRelevanceScore() {
         return relevanceScore;
     }
 
     public void setRelevanceScore(double relevanceScore) {
         this.relevanceScore = relevanceScore;
-    }
-
-    public String toJson() {
-        return "";
     }
 
     public void calculateTf() {
@@ -134,26 +122,25 @@ public class QueryPageResult {
         setTfIdf(tf * idf);
     }
 
-    public void calculateRelevance(int totalDocCount, int refDocCount) {
+    public void calculateRelevance(int refDocCount) {
         calculateTf();
-        calculateIdf(totalDocCount, refDocCount);
+        calculateIdf(Ranker.getTotalDocCount(), refDocCount);
         calculateTfIdf();
         double relevanceScoreCalc = tfIdf * TFIDF_FACTOR + pageRank * PAGERANK_FACTOR + isInHeading() * HEADING_FACTOR + isInLink() * LINK_FACTOR;
         setRelevanceScore(relevanceScoreCalc);
     }
 
-    public String getSnippet(String word) {
+    public String getSnippet() {
         int index = content.indexOf(word);
         //average word is 5 characters, return the first 10 words and subsequent 20 words
-        String snippet = content.substring(index - 50, index + 100);
-        return snippet;
+        return content.substring(Math.max(index - 50, 0), Math.min(index + 100, content.length()));
     }
 
     private double isInLink() {
-        return 0;
+        return docUrl.contains(word) ? 1 : 0;
     }
 
     private double isInHeading() {
-        return 0;
+        return title.contains(word) ? 1 : 0;
     }
 }

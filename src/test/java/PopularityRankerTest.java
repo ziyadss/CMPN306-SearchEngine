@@ -9,9 +9,8 @@ import java.sql.SQLException;
 class PopularityRankerTest {
 
     @Test
-    static void pageRank() throws SQLException {
-        Ranker ranker = new Ranker();
-        ranker.setTotalDocCount(5);
+    static void pageRank() {
+        Ranker.setTotalDocCount(5);
         WebGraph     webGraph      = new WebGraph();
         WebGraphNode webGraphNodea = new WebGraphNode("A", 1);
         WebGraphNode webGraphNodeb = new WebGraphNode("B", 1);
