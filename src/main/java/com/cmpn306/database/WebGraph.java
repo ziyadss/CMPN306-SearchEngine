@@ -1,7 +1,5 @@
 package com.cmpn306.database;
 
-import com.cmpn306.ranker.Ranker;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
@@ -27,9 +25,9 @@ public class WebGraph {
 
     private Boolean urlProcess(ResultSet rs) {
         try {
-            String docUrl = rs.getString("docUrl");
-            double       pageRank = rs.getDouble("pageRank");
-            if(pageRank==-1)
+            String docUrl   = rs.getString("docUrl");
+            double pageRank = rs.getDouble("pageRank");
+            if (pageRank == -1)
                 pageRank = 1;
             WebGraphNode tmp_node = new WebGraphNode(docUrl, pageRank);
             docs.put(tmp_node.getDocUrl(), tmp_node);
