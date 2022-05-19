@@ -14,11 +14,11 @@ public class PopularityRanker {
     double                    offset;
     Hashtable<String, Double> pageRankOld;
 
-    PopularityRanker() {
+    public PopularityRanker() {
         offset = (1 - DAMPENING_FACTOR);
     }
 
-    void setWebGraph(WebGraph webGraph) {
+    public void setWebGraph(WebGraph webGraph) {
         this.webGraph = webGraph;
     }
 
@@ -45,7 +45,7 @@ public class PopularityRanker {
         Database.INSTANCE.update(query);
     }
 
-    void calculatePageRank() {
+    public void calculatePageRank() {
         setPageRankOld(webGraph);
         for (String node: webGraph.getDocs().keySet()) {
             double tmp_calc = 0.0;

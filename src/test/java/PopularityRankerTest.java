@@ -1,7 +1,7 @@
-package com.cmpn306.ranker;
-
 import com.cmpn306.database.WebGraph;
 import com.cmpn306.database.WebGraphNode;
+import com.cmpn306.ranker.PopularityRanker;
+import com.cmpn306.ranker.Ranker;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
