@@ -42,7 +42,7 @@ public class Indexer {
 
         private List<Document> fetchToIndex() throws SQLException {
             String query = String.format(
-                    "SELECT docUrl, content, pageTitle, pageRank FROM documents WHERE indexTime < %d ORDER BY indexTime LIMIT %d",
+                    "SELECT docUrl, content, pageTitle, pageRank FROM documents WHERE indexTime < %d AND crawlTime > 0 ORDER BY indexTime LIMIT %d",
                     System.currentTimeMillis(),
                     LIMIT);
             return Database.INSTANCE.query(query, IndexerThread::resultToDocument);
