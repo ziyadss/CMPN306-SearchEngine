@@ -3,7 +3,6 @@
     <nav>
       <ul>
         <li><router-link to="/about">About</router-link></li>
-        <li><router-link to="/terms">Terms</router-link></li>
       </ul>
     </nav>
   </footer>

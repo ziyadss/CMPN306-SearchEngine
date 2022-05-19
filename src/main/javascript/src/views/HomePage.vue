@@ -5,7 +5,7 @@
     </BaseDialog>
 
     <BaseCard>
-      <h1>SearchEngine</h1>
+      <h1 class="title">Psyche</h1>
       <form @submit.prevent="submitForm">
         <div :class="{ errors: !query.valid }" class="form-control">
           <input
@@ -94,7 +94,13 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style scoped>
+.title {
+  color: #3b1681;
+  text-align: center;
+  font-size: 3rem;
+}
+
 form {
   margin: 1rem;
   padding: 1rem;

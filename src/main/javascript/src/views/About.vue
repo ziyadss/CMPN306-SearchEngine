@@ -1,11 +1,10 @@
 <template>
   <div>
     <BaseCard>
-      <h2 class="title">Page not found</h2>
+      <h2 class="title">About</h2>
       <p>
-        This page could not be found.<br />Would you like to make a
-        <router-link to="/">search</router-link>
-        instead?
+        For information about this project, please visit its
+        <a href="https://github.com/ziyadss/CMPN306-SearchEngine">GitHub repository</a>.
       </p>
     </BaseCard>
   </div>

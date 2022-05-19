@@ -9,7 +9,7 @@
     </BaseDialog>
 
     <BaseCard>
-      <h2>SearchEngine</h2>
+      <h2 class="title">Psyche</h2>
       <form @submit.prevent="submitForm">
         <div :class="{ errors: !query.valid }" class="form-control">
           <input
@@ -21,34 +21,38 @@
             @blur="clearValidity()"
           />
 
+          <BaseButton class="sole-button" text="Search" />
+
           <p v-if="!query.valid">Please enter a valid query.</p>
         </div>
 
-        <div class="controls">
-          <BaseButton text="Search" />
-        </div>
+
       </form>
     </BaseCard>
 
     <BaseCard>
       <h1>Results</h1>
-      <div v-if="!results.length" class="no-results">
+      <div v-if="!results.length || page > pageCount" class="no-results">
         <p>No results found.</p>
       </div>
 
       <div v-else class="results">
         <BaseCard v-for="result in results" :key="result.url">
-          <h2>{{ result.title }}</h2>
-          <h3>{{ result.url }}</h3>
-          <p>{{ boldify(result.snippet) }}</p>
+            <a :href="result.url">
+            <h2>{{ ellipsize(result.title) }}</h2>
+            <h3>{{ellipsize(result.url)}}</h3>
+            </a>
+          <p v-html="boldify(ellipsize(result.snippet, 150))"></p>
         </BaseCard>
       </div>
+
+      <div class="page-slider">
+      <BaseButton v-if="page > 1" text="Previous" @click="previousPage" />
+      <BaseButton v-if="page < pageCount" text="Next" @click="nextPage" />
+    </div>
     </BaseCard>
 
-    <div class="page-slider">
-      <BaseButton v-if="page > 0" text="Previous" @click="previousPage" />
-      <BaseButton v-if="page < total" text="Next" @click="nextPage" />
-    </div>
+    
   </div>
 </template>
 
@@ -70,26 +74,39 @@ export default defineComponent({
       page: 1,
       results: [] as SearchResult[],
       tokens: [] as string[],
-      total: 0,
       isLoading: false,
-      error: null as Error | null
+      error: null as Error | null,
+      pageCount: 1
     };
   },
   computed: {
-      
     validForm(): boolean {
       return this.query.valid;
     }
   },
   methods: {
+      ellipsize(input:string, maxLength:number=35) {
+      if (input == null || input.length <= maxLength) 
+        return input;
+      
+      return input.substring(0, maxLength-3) + "...";
+    },
       boldify(text: string): string {
           return text.replace(new RegExp(`(${this.tokens.join('|')})`, 'gi'), '<b>$1</b>');
       },
     nextPage() {
-      window.open(`https://www.google.com?page=${this.page + 1}`);
+      this.$router.push({
+        query: { q: this.$route.query?.q?.toString(), page: this.page+1 }
+      });
+      this.page++;
+      this.search();
     },
     previousPage() {
-      window.open(`https://www.google.com?page=${this.page - 1}`);
+      this.$router.push({
+        query: { q: this.$route.query?.q?.toString(), page: this.page-1 }
+      });
+      this.page--;
+      this.search();
     },
     clearValidity() {
       this.query.valid = true;
@@ -112,9 +129,10 @@ export default defineComponent({
     },
     search() {
       searchAPI(this.query.value, this.page)
-        .then(({ total, results }) => {
-          this.total = total;
+        .then(({ total, results, tokens }) => {
+          this.pageCount = Math.ceil(total / import.meta.env.VITE_APP_PAGINATION_LIMIT);
           this.results = results;
+          this.tokens = tokens;
         })
         .catch((e) => {
           this.error = e?.response?.data?.error || { message: e?.message || 'UNKNOWN_ERROR' };
@@ -133,6 +151,12 @@ export default defineComponent({
 </script>
 
 <style>
+.title {
+  color: #3b1681;
+  text-align: center;
+  font-size: 2rem;
+}
+
 form {
   margin: 1rem;
   padding: 1rem;
@@ -140,6 +164,8 @@ form {
 
 .form-control {
   margin: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
 }
 
 label {
@@ -172,5 +198,12 @@ textarea:focus {
 .controls {
   display: flex;
   justify-content: space-between;
+}
+
+.sole-button
+{
+    margin-top: 1rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 </style>
