@@ -56,7 +56,7 @@ class PopularityRankerTest {
         webGraphNodee.setPageRank(1.0);
         int iterCount = 0;
         System.out.println("===============================");
-        while (!popularityRanker.isConverged(iterCount)) {
+        while (popularityRanker.notConverged(iterCount)) {
             System.out.println(webGraphNodea.getPageRank());
             System.out.println(webGraphNodeb.getPageRank());
             System.out.println(webGraphNodec.getPageRank());

@@ -40,7 +40,7 @@ public class WebGraph {
     public void getDocumentsUrl() throws SQLException {
         String query = "SELECT docUrl, pageRank FROM documents";
 
-        Database.INSTANCE.query(query, this::urlProcess);
+        Database.query(query, this::urlProcess);
 
     }
 
@@ -50,6 +50,6 @@ public class WebGraph {
         //                                    "JOIN documents AS d1 ON web_graph.srcDocUrl = d1.docUrl" +
         //                                    "JOIN documents AS d2 ON web_graph.dstDocUrl = d2.docUrl";
 
-        Database.INSTANCE.query(query, this::documentProcess);
+        Database.query(query, this::documentProcess);
     }
 }

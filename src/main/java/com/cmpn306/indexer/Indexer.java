@@ -45,7 +45,7 @@ public class Indexer {
                     "SELECT docUrl, content, pageTitle, pageRank FROM documents WHERE indexTime < %d AND crawlTime > 0 ORDER BY indexTime LIMIT %d",
                     System.currentTimeMillis(),
                     LIMIT);
-            return Database.INSTANCE.query(query, IndexerThread::resultToDocument);
+            return Database.query(query, IndexerThread::resultToDocument);
         }
 
         private void updateIndexTime(List<Document> documents) throws SQLException {
@@ -56,7 +56,7 @@ public class Indexer {
                                        .map(doc -> "'" + doc.docUrl + "'")
                                        .collect(Collectors.joining(", ", "(", ");"));
 
-                Database.INSTANCE.update(query + docs);
+                Database.update(query + docs);
             }
         }
 
@@ -92,7 +92,7 @@ public class Indexer {
                     try {
                         String query = "UPDATE documents SET wordCount = " + words.size() + " " + "WHERE docUrl = '" + document.docUrl() + "' ;";
 
-                        Database.INSTANCE.update(query);
+                        Database.update(query);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

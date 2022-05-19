@@ -17,19 +17,18 @@ import java.util.*;
 
 public class Crawler implements Runnable {
 
-    public static        int numOfCrawlers = 8; //NUM OF CRAWLERS TO CRAWL DEFINED HERE
-    private static final int maxNumPages   = 1000; //MAX NUM OF PAGES TO CRAWL
+    private static final int         maxNumPages   = 1000; //MAX NUM OF PAGES TO CRAWL
+    public static        int         numOfCrawlers = 8; //NUM OF CRAWLERS TO CRAWL DEFINED HERE
+    private final        Set<String> visitedSites; // VISITED WEBSITES ARE DEFINED IN A SET WITH BOOLEAN 1-0
     Map<String, Vector<String>> nonAllowedSitesList; // MAPPING OF NON ALLOWED SITES TO CRAWL/ TO DOWNLOAD HTML DOCX FROM
     Map<String, Vector<String>> allowedSitesList; // MAPPING OF ALLOWED SITES TO CRAWL/ TO DOWNLOAD HTML DOCX FROM
     long                        ID; //EVERY URL IS GIVEN A UNIQUE ID FOR ENTRIES IN DATABASE
-
     //    Default 4 hours
-    Date    toRecrawlTime;
-    //A DATE TYPE VARIABLE FOR WHICH WE ARE GOING TO CHECK IF TIME FOR RECRAWL.. 4 HRS
-    int     pass;
-    boolean toRecrawl; // VARIABLE TO ALLOW RECRAWL OR ONE CRAWL IS ENOUGH, SET TRUE TO RECRAWL, FALSE TO CRAWL
-    private final Set<String>  visitedSites; // VISITED WEBSITES ARE DEFINED IN A SET WITH BOOLEAN 1-0
-    private       List<String> queueSites; // LIST OF QUEUE OF SITES waiting TO BE VISITED/CRAWLED
+    Date                        toRecrawlTime;
+    //A DATE TYPE VARIABLE FOR WHICH WE ARE GOING TO CHECK IF TIME FOR RECRAWL... 4 HRS
+    int                         pass;
+    boolean                     toRecrawl; // VARIABLE TO ALLOW RECRAWL OR ONE CRAWL IS ENOUGH, SET TRUE TO RECRAWL, FALSE TO CRAWL
+    private List<String> queueSites; // LIST OF QUEUE OF SITES waiting TO BE VISITED/CRAWLED
 
     //DEFAULT CONSTRUCTOR
     public Crawler(
@@ -75,9 +74,9 @@ public class Crawler implements Runnable {
         Thread                      th; //dummy for thread initiation and adding to list
 
         String query = "SELECT docUrl FROM documents WHERE crawlTime = 0;";
-        queueSites   = Database.INSTANCE.query(query, Crawler::getURL);
+        queueSites   = Database.query(query, Crawler::getURL);
         query        = "SELECT docUrl FROM documents WHERE crawlTime > 0;";
-        visitedSites = new HashSet<>(Database.INSTANCE.query(query, Crawler::getURL));
+        visitedSites = new HashSet<>(Database.query(query, Crawler::getURL));
         if (visitedSites.size() == 0 && queueSites.size() == 0) //if visited and queue is empty then this the first run
         // we need to generate urls from seed_list.txt file previous chosen
         {
@@ -122,19 +121,19 @@ public class Crawler implements Runnable {
                     query = "SELECT docUrl FROM documents WHERE important = 1;";
                     pass  = 0;
                 }
-                queueSites = Database.INSTANCE.query(query, Crawler::getURL);
+                queueSites = Database.query(query, Crawler::getURL);
             }
             while ((new Date().after(toRecrawlTime))) {
                 //System.out.println("A New Crawl Process is Initiated1.. ");
             }
-            //time flag condition for recrawl returns false if current time hasnot passed
+            //time flag condition for recrawl returns false if current time hasn't passed
             //else
             System.out.println("A New Crawl Process is Initiated.. at time: " + new Date());
             while (true) {  // recrawl every 4 hours... set by default in database in minutes or hours as you wish
 
                 synchronized (queueSites) //here we lock on the resource queue for multi threading
                 {
-                    if (queueSites.isEmpty()) //checing if queue is empty at this moment
+                    if (queueSites.isEmpty()) //checking if queue is empty at this moment
                     {
                         //if yes go out we finished and update the time of last recrawl
                         //                        DB.updateDate(time2);
@@ -143,12 +142,12 @@ public class Crawler implements Runnable {
                 }
                 current_URL = null;
                 synchronized (queueSites) { //we also lock on the resource queue but now for extraction of next url
-                    if (!queueSites.isEmpty()) //checking at this moment isnot empty
+                    if (!queueSites.isEmpty()) //checking at this moment isn't empty
                     {
                         current_URL = queueSites.remove(0); //extracting the first on queue and then shifting in list
                     }
                 }
-                if (current_URL != null) {   //if there exist a useful (a non null) url start scraping and robot parsing instructions
+                if (current_URL != null) {   //if there exist a useful (a non-null) url start scraping and robot parsing instructions
                     Scraper myScraper = new Scraper();
                     myScraper.Rescrape(current_URL);
                 }
@@ -164,7 +163,7 @@ public class Crawler implements Runnable {
         while (true) {
             synchronized (visitedSites) //we lock on the resource visited sites at this moment for each thread
             {
-                if (visitedSites.size() > maxNumPages) //limited by max num pages.. if true we are finished crawling pages
+                if (visitedSites.size() > maxNumPages) //limited by max num pages... if true we are finished crawling pages
                     break;
             }
             current_URL = null;
@@ -181,16 +180,16 @@ public class Crawler implements Runnable {
                             //
 
                         } catch (Exception ignoredURL) {
-                            // in case extraction was null or some error occured in parsing string
+                            // in case extraction was null or some error occurred in parsing string
 
                         }
-                        if (current_URL != null) { // ifnot null we now add it to visited list
+                        if (current_URL != null) { // if not null we now add it to visited list
                             visitedSites.add(current_URL);
                         }
                     }
                 }
             }
-            if (current_URL != null) { //if not null strart scraping
+            if (current_URL != null) { //if not null start scraping
                 Scraper myScraper = new Scraper();
                 myScraper.Scrape(current_URL, nonAllowedSitesList, allowedSitesList);
                 try {
@@ -209,7 +208,7 @@ public class Crawler implements Runnable {
 
         Crawl(); //main function of crawling
 
-        if (toRecrawl)//toRecrawl)  //the boolean variable,, set to true if you want to recrawl
+        if (toRecrawl)//toRecrawl)  //the boolean variable, set to true if you want to recrawl
         {
             try {
                 Recrawl(); //repeating crawling

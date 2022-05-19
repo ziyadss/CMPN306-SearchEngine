@@ -125,20 +125,20 @@ public class Scraper {
                     htmlDocx.text().replaceAll("'", "''"),
                     System.currentTimeMillis(),
                     of_Importance);
-            Database.INSTANCE.update(query);
+            Database.update(query);
 
             if (getLinks().size() > 0) {
                 query = "INSERT OR IGNORE INTO documents (pageTitle, docUrl, content) VALUES ";
                 String to_add = getLinks().stream()
                                           .map(link -> String.format("(' ', '%s', ' ')", link))
                                           .collect(Collectors.joining(", "));
-                Database.INSTANCE.update(query + to_add + ";");
+                Database.update(query + to_add + ";");
 
                 query  = "INSERT OR REPLACE INTO web_graph (srcDocUrl, dstDocUrl) VALUES ";
                 to_add = getLinks().stream()
                                    .map(link -> String.format("('%s', '%s')", URL, link))
                                    .collect(Collectors.joining(", "));
-                Database.INSTANCE.update(query + to_add + ";");
+                Database.update(query + to_add + ";");
             }
 
         } catch (IOException ioe) {
@@ -204,7 +204,11 @@ public class Scraper {
         try {
 
             //Document htmlDocument = Jsoup.connect(url).get();
-            Document htmlDocx = Jsoup.connect(url).timeout(600000).ignoreContentType(true).ignoreHttpErrors(true).get();
+            Document htmlDocx   = Jsoup.connect(url)
+                                       .timeout(600000)
+                                       .ignoreContentType(true)
+                                       .ignoreHttpErrors(true)
+                                       .get();
             Elements hyperLinks = htmlDocx.select("a[href]");
             for (Element link: hyperLinks) {
                 this.Links.add(link.absUrl("href"));
@@ -214,10 +218,10 @@ public class Scraper {
             }
 
             String query = "UPDATE documents SET indexTime = 0 WHERE url = '" + url + "'";
-            Database.INSTANCE.update(query);
+            Database.update(query);
 
             query = "DELETE FROM web_graph WHERE dstDocUrl = '" + url + "'";
-            Database.INSTANCE.update(query);
+            Database.update(query);
 
         } catch (IOException ioe) {
             System.out.println("Error in the HTTP request " + ioe + url);

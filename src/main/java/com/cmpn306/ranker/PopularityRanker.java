@@ -31,7 +31,7 @@ public class PopularityRanker {
     void pageRank() throws SQLException {
         getPages();
         int iterCount = 0;
-        while (!isConverged(iterCount)) {
+        while (notConverged(iterCount)) {
             calculatePageRank();
             iterCount++;
         }
@@ -42,7 +42,7 @@ public class PopularityRanker {
 
     private void updatePageRankQuery(String node, double pageRank) throws SQLException {
         String query = "UPDATE documents SET pageRank = " + pageRank + "WHERE docUrl=\"" + node + "\";";
-        Database.INSTANCE.update(query);
+        Database.update(query);
     }
 
     public void calculatePageRank() {
@@ -66,14 +66,14 @@ public class PopularityRanker {
             pageRankOld.put(webGraph.getDocs().get(node).getDocUrl(), webGraph.getDocs().get(node).getPageRank());
     }
 
-    public boolean isConverged(int i) {
+    public boolean notConverged(int i) {
         if (i == 0)
-            return false;
-        if (i >= MAX_ITERATIONS)
             return true;
-        Double err = 0.0;
+        if (i >= MAX_ITERATIONS)
+            return false;
+        double err = 0.0;
         for (String node: webGraph.getDocs().keySet())
             err += Math.abs(webGraph.getDocs().get(node).getPageRank() - pageRankOld.get(node));
-        return err < ERROR_TOLERANCE * Ranker.getTotalDocCount();
+        return !(err < ERROR_TOLERANCE * Ranker.getTotalDocCount());
     }
 }

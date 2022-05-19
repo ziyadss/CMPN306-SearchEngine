@@ -13,13 +13,13 @@ public class WordsTable {
 
         String wordsString = words.stream().collect(Collectors.joining("'), ('", "('", "');"));
 
-        Database.INSTANCE.update(query + wordsString);
+        Database.update(query + wordsString);
 
         query = "REPLACE INTO word_document(docUrl, word, wordCount) VALUES ";
         String entries = words.stream()
                               .map(word -> "('" + docUrl + "', '" + word + "', " + wordFreq.get(word) + ")")
                               .collect(Collectors.joining(", ", "", ";"));
 
-        Database.INSTANCE.update(query + entries);
+        Database.update(query + entries);
     }
 }

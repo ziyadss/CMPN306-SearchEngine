@@ -11,16 +11,12 @@ public class WebGraphNode {
     public WebGraphNode(String docUrl, double pageRank) {
         this.docUrl   = docUrl;
         this.pageRank = pageRank;
-        outGoingUrls  = new Hashtable<String, WebGraphNode>();
-        incomingUrls  = new Hashtable<String, WebGraphNode>();
+        outGoingUrls  = new Hashtable<>();
+        incomingUrls  = new Hashtable<>();
     }
 
     public String getDocUrl() {
         return docUrl;
-    }
-
-    public void setDocUrl(String docUrl) {
-        this.docUrl = docUrl;
     }
 
     public Hashtable<String, WebGraphNode> getOutGoingUrls() {

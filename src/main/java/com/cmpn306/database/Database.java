@@ -12,23 +12,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-public enum Database {
-    INSTANCE;
+public class Database {
+    private static final String           SCHEMA_PATH   = "./schema.sql";
+    private static final String           DATABASE_NAME = "searchEngineDatabase.db";
+    private static final SQLiteDataSource dataSource    = new SQLiteDataSource();
 
-    private final String           SCHEMA_PATH   = "./schema.sql";
-    private final String           DATABASE_NAME = "searchEngineDatabase.db";
-    private final SQLiteDataSource dataSource    = new SQLiteDataSource();
-
-    Database() {
+    static {
         dataSource.setUrl("jdbc:sqlite:" + DATABASE_NAME);
         createTables();
     }
 
     public static void main(String[] args) {
-        Database.INSTANCE.createTables();
+        Database.createTables();
     }
 
-    void createTables() {
+    static void createTables() {
         try {
             String[] tokens = Arrays.stream(Files.readString(Path.of(SCHEMA_PATH), StandardCharsets.UTF_8).split(";"))
                                     .filter(s -> !s.isBlank())
@@ -39,7 +37,7 @@ public enum Database {
         }
     }
 
-    public <T> List<T> query(String query, Function<ResultSet, T> function) throws SQLException {
+    public static <T> List<T> query(String query, Function<ResultSet, T> function) throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement();
@@ -52,7 +50,7 @@ public enum Database {
         }
     }
 
-    public int update(String query) throws SQLException {
+    public static int update(String query) throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement()
@@ -61,7 +59,7 @@ public enum Database {
         }
     }
 
-    public int[] updateBatch(String[] queries) throws SQLException {
+    public static int[] updateBatch(String[] queries) throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
                 Statement stmt = connection.createStatement()
