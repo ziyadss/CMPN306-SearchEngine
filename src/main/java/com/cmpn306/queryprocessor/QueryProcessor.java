@@ -1,7 +1,6 @@
 package com.cmpn306.queryprocessor;
 
 import com.cmpn306.ranker.QueryPageResult;
-import com.cmpn306.ranker.Ranker;
 import com.cmpn306.util.Stemmer;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -83,22 +82,24 @@ public class QueryProcessor extends HttpServlet {
 
         Stream<QueryResult>                    results    = Stream.of(qr1, qr2);
         HashMap<String, List<QueryPageResult>> resultsMap = null;
-        Ranker.rank(resultsMap);
+        //        Ranker.rank(resultsMap);
 
         return results;
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String query  = request.getParameter("q");
-        String page_s = request.getParameter("page");
-        boolean lucky = request.getParameter("lucky") != null;
+        String  query  = request.getParameter("q");
+        String  page_s = request.getParameter("page");
+        boolean lucky  = request.getParameter("lucky") != null;
 
-        int    page   = page_s == null ? 1 : Integer.parseInt(page_s.trim().replaceAll("/$", ""));
+        int page = page_s == null ? 1 : Integer.parseInt(page_s.trim().replaceAll("/$", ""));
 
         Stream<QueryResult> results = process(query, page, lucky);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET");
         response.setStatus(HttpServletResponse.SC_OK);
 
         try (PrintWriter out = response.getWriter()) {

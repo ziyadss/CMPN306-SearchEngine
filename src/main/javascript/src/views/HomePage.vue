@@ -42,10 +42,22 @@ import { defineComponent } from 'vue';
 
 import axios from '@/axios-instance';
 
+interface SearchResult {
+  title: string;
+  url: string;
+  snippet: string;
+}
+
 export default defineComponent({
   components: { BaseButton, BaseCard, BaseDialog, BaseSpinner },
   data() {
-    return { query: { value: '', valid: true }, page: 1, error: null, isLoading: false };
+    return {
+      query: { value: '', valid: true },
+      page: 1,
+      results: [] as SearchResult[],
+      isLoading: false,
+      error: null
+    };
   },
   computed: {
     validForm(): boolean {
@@ -73,16 +85,15 @@ export default defineComponent({
 
       if (!this.validForm) return;
 
-      const form = { query: this.query.value };
       this.isLoading = true;
 
       axios
-        .get(`/search?q=${this.query}&page=${this.page}`)
+        .get(`/search?q=${this.query.value}&page=${this.page}`)
         .then(({ data }) => {
-          console.log(data);
+          this.results = data.results;
         })
         .catch((e) => {
-          throw e.response.data.error || { message: 'UNKNOWN_ERROR' };
+          throw e?.response?.data?.error || { message: e?.message || 'UNKNOWN_ERROR' };
         })
         .finally(() => {
           this.isLoading = false;
