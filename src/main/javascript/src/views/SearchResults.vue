@@ -40,7 +40,7 @@
         <BaseCard v-for="result in results" :key="result.url">
           <h2>{{ result.title }}</h2>
           <h3>{{ result.url }}</h3>
-          <p>{{ result.snippet }}</p>
+          <p>{{ boldify(result.snippet) }}</p>
         </BaseCard>
       </div>
     </BaseCard>
@@ -59,7 +59,7 @@ import BaseDialog from '@/components/ui/BaseDialog.vue';
 import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { defineComponent } from 'vue';
 
-import type { SearchResult, Error, QueryResult } from '@/interfaces';
+import type { SearchResult, Error } from '@/interfaces';
 import { searchAPI } from '@/axios-instance';
 
 export default defineComponent({
@@ -69,17 +69,22 @@ export default defineComponent({
       query: { value: '', valid: true },
       page: 1,
       results: [] as SearchResult[],
+      tokens: [] as string[],
       total: 0,
       isLoading: false,
       error: null as Error | null
     };
   },
   computed: {
+      
     validForm(): boolean {
       return this.query.valid;
     }
   },
   methods: {
+      boldify(text: string): string {
+          return text.replace(new RegExp(`(${this.tokens.join('|')})`, 'gi'), '<b>$1</b>');
+      },
     nextPage() {
       window.open(`https://www.google.com?page=${this.page + 1}`);
     },

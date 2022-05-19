@@ -7,6 +7,7 @@ export interface SearchResult {
 export interface QueryResult {
   total: number;
   results: SearchResult[];
+  tokens: string[];
 }
 
 export interface Error {
