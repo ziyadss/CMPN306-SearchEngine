@@ -11,11 +11,12 @@ A search engine - named Psyche, after the Greek goddess of the soul Psyche, Cupi
 - Run the component needed via its class name
 
 ```sh
-gradle run run -Dexec.mainClass=com.cmpn306.package.class
+gradle run -Dexec.mainClass=com.cmpn306.package.class
 ```
 
 | Component | Class                          |
 | --------- | ------------------------------ |
+| Database  | com.cmpn306.database.Database  |
 | Crawler   | com.cmpn306.crawler.Crawler    |
 | Indexer   | com.cmpn306.indexer.Indexer    |
 | Ranker    | com.cmpn306.ranker.Ranker      |
