@@ -14,6 +14,7 @@
             placeholder="..."
             required
             type="query"
+            @change="updateSuggestions()"
             @blur="clearValidity()"
           />
 
@@ -37,13 +38,14 @@ import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { defineComponent } from 'vue';
 
 import type { Error } from '@/interfaces';
-import { search } from '@/axios-instance';
+import { searchAPI } from '@/axios-instance';
 
 export default defineComponent({
   components: { BaseButton, BaseCard, BaseDialog, BaseSpinner },
   data() {
     return {
       query: { value: '', valid: true },
+      suggestions: [] as string[],
       error: null as Error | null
     };
   },
@@ -53,13 +55,16 @@ export default defineComponent({
     }
   },
   methods: {
+    updateSuggestions() {
+      this.suggestions = ['foo', 'bar', 'baz'];
+    },
     feelingLucky() {
       this.validateForm();
 
       if (!this.validForm) return;
       this.submitForm();
 
-      search(this.query.value)
+      searchAPI(this.query.value)
         .then(({ results }) => {
           if (results.length === 0)
             this.$router.push({ path: '/search', query: { query: this.query.value } });

@@ -60,7 +60,7 @@ import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { defineComponent } from 'vue';
 
 import type { SearchResult, Error, QueryResult } from '@/interfaces';
-import { search } from '@/axios-instance';
+import { searchAPI } from '@/axios-instance';
 
 export default defineComponent({
   components: { BaseButton, BaseCard, BaseDialog, BaseSpinner },
@@ -98,29 +98,31 @@ export default defineComponent({
       if (!this.validForm) return;
 
       this.$router.push({
-        path: '/search',
         query: { q: this.query.value, page: this.page }
       });
+      this.search();
     },
     handleError() {
       this.error = null;
+    },
+    search() {
+      searchAPI(this.query.value, this.page)
+        .then(({ total, results }) => {
+          this.total = total;
+          this.results = results;
+        })
+        .catch((e) => {
+          this.error = e?.response?.data?.error || { message: e?.message || 'UNKNOWN_ERROR' };
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     }
   },
   created() {
     this.query.value = this.$route.query?.q?.toString() ?? '';
     this.page = parseInt(this.$route.query?.page?.toString() ?? '1');
-
-    search(this.query.value, this.page)
-      .then(({ total, results }) => {
-        this.total = total;
-        this.results = results;
-      })
-      .catch((e) => {
-        this.error = e?.response?.data?.error || { message: e?.message || 'UNKNOWN_ERROR' };
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
+    this.search();
   }
 });
 </script>
