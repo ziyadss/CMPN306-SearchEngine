@@ -27,10 +27,11 @@ public class WebGraph {
 
     private Boolean urlProcess(ResultSet rs) {
         try {
-            // TODO: add pageRank to the node
             String docUrl = rs.getString("docUrl");
-            //double       pageRank = rs.getDouble("pageRank");
-            WebGraphNode tmp_node = new WebGraphNode(docUrl, 1.0 / Ranker.getTotalDocCount());
+            double       pageRank = rs.getDouble("pageRank");
+            if(pageRank==-1)
+                pageRank = 1;
+            WebGraphNode tmp_node = new WebGraphNode(docUrl, pageRank);
             docs.put(tmp_node.getDocUrl(), tmp_node);
             return true;
         } catch (SQLException e) {
