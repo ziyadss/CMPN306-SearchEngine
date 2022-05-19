@@ -39,10 +39,10 @@ public class Indexer implements Runnable {
             }
             // for every document
             for (Document document: documents) {
-                List<String> words = Filterer.getKeyWords(document.getContent());
+                List<String> words = Filterer.getKeyWords(document.content());
 
                 try {
-                    documentsTable.updateCountByURL(document.getDocUrl(), words.size());
+                    documentsTable.updateCountByURL(document.docUrl(), words.size());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -51,14 +51,14 @@ public class Indexer implements Runnable {
                 words.forEach(word -> wordFreq.merge(word, 1L, Long::sum));
                 //update word count for the URL doc
                 try {
-                    documentsTable.updateCountByURL(document.getDocUrl(), words.size());
+                    documentsTable.updateCountByURL(document.docUrl(), words.size());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
                 if (wordFreq.size() > 0) {
                     try {
-                        wordsTable.insertWords(wordFreq, document.getDocUrl());
+                        wordsTable.insertWords(wordFreq, document.docUrl());
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

@@ -26,18 +26,3 @@ public class API {
         tomcat.getServer().await();
     }
 }
-
-
-/*
-    GET http://localhost:8080/search?q=hello
-
-    GET http://localhost:8080/search?q=hello/
-
-    GET http://localhost:8080/search?q=hello&page=2
-
-    GET http://localhost:8080/search?q=hello&page=2/
-
-    GET http://localhost:8080/search?page=2&q=hello
-
-    GET http://localhost:8080/search?page=2&q=hello/
-*/

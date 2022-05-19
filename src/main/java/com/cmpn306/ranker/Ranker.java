@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Ranker {
 
-    private final PopularityRanker popularityRanker = new PopularityRanker();
-    private final RelevanceRanker  relevanceRanker  = new RelevanceRanker();
+    private static final PopularityRanker popularityRanker = new PopularityRanker();
+    private static final RelevanceRanker  relevanceRanker  = new RelevanceRanker();
     int totalDocCount;
 
     public Ranker() {
@@ -22,7 +22,7 @@ public class Ranker {
         relevanceRanker.setTotalDocCount(this.totalDocCount);
     }
 
-    public void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
+    public static void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
         //NOTE: HashMap are faster however it is not synchronized, if threading is used HashTable is preferred
         relevanceRanker.rank(resultsMap);
     }

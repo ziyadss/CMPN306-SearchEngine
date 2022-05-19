@@ -16,7 +16,7 @@ public class Filterer {
     private static final Pattern whiteSpace = Pattern.compile("\\s+");
     private static final Pattern htmlTags   = Pattern.compile("</?(!doctype html|a|abbr|address|area|article|aside" + "|audio|b|base|basefont|bdi|bdo|big|blockquote|body" + "|br" + "|button|canvas|caption|center|cite" + "|code" + "|col|colgroup|data|datalist|dd|del|details|dfn" + "|dialog|dir" + "|div" + "|dl|dt|em|embed|fieldset" + "|figcaption|figure|font|footer|form|frame|frameset|h1|head|header" + "|hr|html|i" + "|iframe|img" + "|input|ins|kbd|label|legend|li|link|main|map|mark|meta|meter|nav|noframes" + "|noscript" + "|object|ol|optgroup|option|output|p|param|picture|pre|progress|q|rp|rt|ruby|s|samp|" + "script|section" + "|select|small|source|span|strike|strong|sub|summary|sup|svg|table|tbody|td|template|" + "textarea|tfoot" + "|th|thead|time|title|tr|track|tt|u|ul|var|video|wbr) ?[^>]*>");
     private static final Pattern css        = Pattern.compile("<style ? [\\w\\W]*</style>");
-    private static final Pattern bigWords   = Pattern.compile("([\\w]{15,})");
+    private static final Pattern bigWords   = Pattern.compile("(\\w{15,})");
     private              String  text;
 
     public Filterer(String text) {

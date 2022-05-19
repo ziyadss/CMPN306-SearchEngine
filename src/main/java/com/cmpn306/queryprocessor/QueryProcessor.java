@@ -1,5 +1,7 @@
 package com.cmpn306.queryprocessor;
 
+import com.cmpn306.ranker.QueryPageResult;
+import com.cmpn306.ranker.Ranker;
 import com.cmpn306.util.Stemmer;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -78,8 +81,9 @@ public class QueryProcessor extends HttpServlet {
         QueryResult qr1 = new QueryResult("title1", "url1", "snippet1");
         QueryResult qr2 = new QueryResult("title2", "url2", "snippet2");
 
-        Stream<QueryResult> results = Stream.of(qr1, qr2);
-        // TODO: rank results
+        Stream<QueryResult>                    results    = Stream.of(qr1, qr2);
+        HashMap<String, List<QueryPageResult>> resultsMap = null;
+        Ranker.rank(resultsMap);
 
         return results;
     }

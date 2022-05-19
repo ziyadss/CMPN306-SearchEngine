@@ -25,13 +25,16 @@ public class DocumentsTable {
             documents = new ArrayList<>();
 
             while (rs.next()) {
-                String   docUrl      = rs.getString("docUrl");
-                String   content     = rs.getString("content");
-                int      wordCount   = 0;
-                long     timeCurrent = rs.getLong("timeCurrent");
-                float    pageRank    = rs.getFloat("pageRank");
-                String   pageTitle   = rs.getString("pageTitle");
-                Document tmp_doc     = new Document(docUrl, content, wordCount, timeCurrent, pageRank, pageTitle);
+                String docUrl      = rs.getString("docUrl");
+                String content     = rs.getString("content");
+                String pageTitle   = rs.getString("pageTitle");
+                int    wordCount   = 0;
+                long   indexedTime = 0;
+                long   timeCurrent = rs.getLong("timeCurrent");
+                float  pageRank    = rs.getFloat("pageRank");
+
+                // TODO: Ask Khaled?
+                Document tmp_doc = new Document(docUrl, content, pageTitle, wordCount, 0, timeCurrent, pageRank);
             }
         }
         return documents;
@@ -47,7 +50,7 @@ public class DocumentsTable {
         StringBuilder query = new StringBuilder("UPDATE documents SET indexTime = " + System.currentTimeMillis() + " WHERE docUrl in (");
 
         for (int i = 0; i < documents.size(); ++i) {
-            query.append(documents.get(i).getDocUrl());
+            query.append(documents.get(i).docUrl());
             if (i != documents.size() - 1)
                 query.append(", ");
         }

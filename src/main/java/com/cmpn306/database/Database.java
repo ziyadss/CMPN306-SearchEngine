@@ -21,6 +21,10 @@ public enum Database {
         createTables();
     }
 
+    public static void main(String[] args) {
+        Database.INSTANCE.createTables();
+    }
+
     void createTables() {
         try {
             String[] tokens = Arrays.stream(Files.readString(Path.of(SCHEMA_PATH), StandardCharsets.UTF_8).split(";"))
