@@ -1,7 +1,7 @@
-import SearchResults from '@/views/SearchResults.vue';
+import Search from '@/views/Search.vue';
 
 export default {
   path: '/search',
-  name: 'search-results',
-  component: SearchResults
+  name: 'search',
+  component: Search
 };
