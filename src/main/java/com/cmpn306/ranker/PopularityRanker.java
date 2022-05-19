@@ -8,13 +8,17 @@ import java.util.Hashtable;
 public class PopularityRanker {
     private final double DAMPENING_FACTOR = 0.85;
     private final double ERROR_TOLERANCE  = 1.0e-6;
-    private final int MAX_ITERATIONS = 5;
+    private final int MAX_ITERATIONS = 15;
     WebGraph webGraph;
     double offset;
     Hashtable<String,Double> pageRankOld;
 
     PopularityRanker() {
-        offset = (1-DAMPENING_FACTOR)/Ranker.getTotalDocCount();
+        offset = (1-DAMPENING_FACTOR);
+    }
+
+    void setWebGraph(WebGraph webGraph){
+        this.webGraph = webGraph;
     }
 
     void getPages() throws SQLException {
@@ -37,10 +41,9 @@ public class PopularityRanker {
     void calculatePageRank(){
         setPageRankOld(webGraph);
         for(String node :webGraph.getDocs().keySet()){
-            double tmp_calc = 0;
-            for(String link : webGraph.getDocs().get(node).getOutGoingUrls().keySet()){
-                if(webGraph.getDocs().get(link).getOutGoingUrls().contains(node))
-                    tmp_calc += webGraph.getDocs().get(link).getPageRank()/webGraph.getDocs().get(link).getOutGoingUrls().size();
+            double tmp_calc = 0.0;
+            for(String link : webGraph.getDocs().get(node).getIncomingUrls().keySet()){
+                tmp_calc += webGraph.getDocs().get(link).getPageRank()/webGraph.getDocs().get(link).getOutGoingUrls().size();
             }
             webGraph.getDocs().get(node).setPageRank(offset + DAMPENING_FACTOR*tmp_calc);
         }
@@ -54,6 +57,8 @@ public class PopularityRanker {
     }
 
     public boolean isConverged(int i){
+        if(i==0)
+            return false;
         if(i >= MAX_ITERATIONS)
             return true;
         Double err=0.0;

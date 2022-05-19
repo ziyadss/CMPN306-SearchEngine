@@ -39,6 +39,7 @@ public class WebGraph {
                 String srcDocUrl = rs.getString("srcDocUrl");
                 String dstDocUrl = rs.getString("dstDocUrl");
                 docs.get(srcDocUrl).outGoingUrls.put(dstDocUrl, docs.get(dstDocUrl));
+                docs.get(dstDocUrl).incomingUrls.put(srcDocUrl, docs.get(srcDocUrl));
             }
         }
     }
