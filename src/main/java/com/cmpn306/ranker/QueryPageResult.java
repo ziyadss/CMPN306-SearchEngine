@@ -18,12 +18,12 @@ public class QueryPageResult {
 
     //Data members from the documents table
     int    docWordCount;
-    int    content;
-    int    title;
+    String    content;
+    String    title;
     double relevanceScore;
 
     public QueryPageResult(
-            String word, String docUrl, int wordCount, int docWordCount, int content, int title, double pageRank
+            String word, String docUrl, int wordCount, int docWordCount, String content, String title, double pageRank
                           ) {
         this.word         = word;
         this.docUrl       = docUrl;
@@ -94,19 +94,19 @@ public class QueryPageResult {
         this.docWordCount = docWordCount;
     }
 
-    public int getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(int content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
-    public int getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(int title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -140,6 +140,13 @@ public class QueryPageResult {
         calculateTfIdf();
         double relevanceScoreCalc = tfIdf * TFIDF_FACTOR + pageRank * PAGERANK_FACTOR + isInHeading() * HEADING_FACTOR + isInLink() * LINK_FACTOR;
         setRelevanceScore(relevanceScoreCalc);
+    }
+
+    public String getSnippet(String word) {
+        int index = content.indexOf(word);
+        //average word is 5 characters, return the first 10 words and subsequent 20 words
+        String snippet = content.substring(index - 50, index + 100);
+        return snippet;
     }
 
     private double isInLink() {
