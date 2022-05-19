@@ -22,13 +22,14 @@ public class QueryPageResult {
     int    title;
     double relevanceScore;
 
-    public QueryPageResult(String word, String docUrl, int wordCount, int docWordCount, int content, int title) {
+    public QueryPageResult(String word, String docUrl, int wordCount, int docWordCount, int content, int title,double pageRank) {
         this.word         = word;
         this.docUrl       = docUrl;
         this.wordCount    = wordCount;
         this.docWordCount = docWordCount;
         this.content      = content;
         this.title        = title;
+        this.pageRank     = pageRank;
     }
 
     public QueryPageResult() {
