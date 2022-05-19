@@ -30,7 +30,6 @@ public enum Database {
         } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     ResultSet query(String query) throws SQLException {
