@@ -12,13 +12,16 @@
       <h2 class="title">Psyche</h2>
       <form @submit.prevent="submitForm">
         <div :class="{ errors: !query.valid }" class="form-control">
-          <input
+          <Autocomplete
             id="query"
             v-model.trim="query.value"
             placeholder="..."
             required
             type="query"
-            @blur="clearValidity()"
+            @input="updateSuggestions"
+            :results="suggestions"
+            @select="itemSelection"
+            @blur="clearValidity"
           />
 
           <BaseButton class="sole-button" text="Search" />
@@ -60,13 +63,17 @@ import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { defineComponent } from 'vue';
 
 import type { SearchResult, Error } from '@/interfaces';
-import { searchAPI } from '@/axios-instance';
+import { searchAPI, suggestAPI } from '@/axios-instance';
+
+import Autocomplete from 'vue3-autocomplete';
+import 'vue3-autocomplete/dist/vue3-autocomplete.css';
 
 export default defineComponent({
-  components: { BaseButton, BaseCard, BaseDialog, BaseSpinner },
+  components: { BaseButton, BaseCard, BaseDialog, BaseSpinner, Autocomplete },
   data() {
     return {
       query: { value: '', valid: true },
+      suggestions: [] as string[],
       page: 1,
       results: [] as SearchResult[],
       tokens: [] as string[],
@@ -81,6 +88,19 @@ export default defineComponent({
     }
   },
   methods: {
+    itemSelection(item: string) {
+      this.query.value = item;
+      this.$router.push({ name: 'search', params: { query: item } });
+    },
+    updateSuggestions() {
+      suggestAPI(this.query.value)
+        .then((suggestions) => {
+          this.suggestions = suggestions;
+        })
+        .catch(() => {
+          this.suggestions = [];
+        });
+    },
     ellipsize(input: string, maxLength: number = 35) {
       if (input == null || input.length <= maxLength) return input;
 
