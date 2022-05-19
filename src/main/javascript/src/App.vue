@@ -18,6 +18,7 @@ export default defineComponent({
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import 'vue3-simple-typeahead/dist/vue3-simple-typeahead.css';
 
 * {
   box-sizing: border-box;

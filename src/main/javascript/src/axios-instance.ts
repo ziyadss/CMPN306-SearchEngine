@@ -15,7 +15,6 @@ export function searchAPI(query: string, page = 1, lucky = false): Promise<Query
 
 export function suggestAPI(query: string): Promise<string[]> {
   return axiosSearch.get(`/suggest?q=${encodeURIComponent(query)}`).then(({ data }) => {
-    console.log(data);
     return data.suggestions;
   });
 }

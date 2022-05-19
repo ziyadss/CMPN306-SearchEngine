@@ -8,16 +8,14 @@
       <h1 class="title">Psyche</h1>
       <form @submit.prevent="submitForm">
         <div :class="{ errors: !query.valid }" class="form-control">
-          <Autocomplete
+          <SimpleTypeahead
             id="query"
-            v-model.trim="query.value"
             placeholder="..."
-            required
-            type="query"
-            @input="updateSuggestions"
-            :results="suggestions"
-            @select="itemSelection"
-            @blur="clearValidity"
+            :items="suggestions"
+            :minInputLength="1"
+            @selectItem="selectItem"
+            @onInput="updateInput"
+            @onBlur="clearValidity"
           />
 
           <p v-if="!query.valid">Please enter a valid query.</p>
@@ -42,11 +40,10 @@ import { defineComponent } from 'vue';
 import type { Error } from '@/interfaces';
 import { searchAPI, suggestAPI } from '@/axios-instance';
 
-import Autocomplete from 'vue3-autocomplete';
-import 'vue3-autocomplete/dist/vue3-autocomplete.css';
+import SimpleTypeahead from 'vue3-simple-typeahead';
 
 export default defineComponent({
-  components: { BaseButton, BaseCard, BaseDialog, BaseSpinner, Autocomplete },
+  components: { BaseButton, BaseCard, BaseDialog, BaseSpinner, SimpleTypeahead },
   data() {
     return {
       query: { value: '', valid: true },
@@ -60,11 +57,12 @@ export default defineComponent({
     }
   },
   methods: {
-    itemSelection(item: string) {
+    selectItem(item: string) {
       this.query.value = item;
-      this.$router.push({ name: 'search', params: { query: item } });
+      this.submitForm();
     },
-    updateSuggestions() {
+    updateInput(event: { input: string; items: string[] }) {
+      this.query.value = event.input;
       suggestAPI(this.query.value)
         .then((suggestions) => {
           this.suggestions = suggestions;
@@ -82,7 +80,7 @@ export default defineComponent({
       searchAPI(this.query.value)
         .then(({ results }) => {
           if (results.length === 0)
-            this.$router.push({ path: '/search', query: { query: this.query.value } });
+            this.$router.push({ name: 'search', query: { q: this.query.value } });
           else window.open(results[0].url);
         })
         .catch((e) => {
@@ -100,7 +98,7 @@ export default defineComponent({
 
       if (!this.validForm) return;
 
-      this.$router.push({ path: '/search', query: { q: this.query.value, page: 1 } });
+      this.$router.push({ name: 'search', query: { q: this.query.value, page: 1 } });
     },
     handleError() {
       this.error = null;
