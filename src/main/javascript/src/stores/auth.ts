@@ -1,18 +1,7 @@
 import { axiosAuth as axios } from '@/axios-instance';
 import { defineStore } from 'pinia';
 
-interface User {
-  displayName: string;
-  refreshToken: string;
-  email: string;
-  ID: string;
-  token: string;
-}
-
-interface AuthForm {
-  mode: string;
-  form: { email: string; password: string };
-}
+import type { User, AuthForm } from '@/interfaces';
 
 let timer: NodeJS.Timeout;
 export const useAuthStore = defineStore({

@@ -1,11 +1,15 @@
 <template>
   <div>
+    <BaseDialog :show="isLoading" fixed title="Loading">
+      <BaseSpinner />
+    </BaseDialog>
+
     <BaseDialog :show="!!error" title="An error occurred" @close="handleError">
       <p>An error occurred. Please try again or contact support if the error persists.</p>
     </BaseDialog>
 
     <BaseCard>
-      <h1>SearchEngine</h1>
+      <h2>SearchEngine</h2>
       <form @submit.prevent="submitForm">
         <div :class="{ errors: !query.valid }" class="form-control">
           <input
@@ -22,10 +26,29 @@
 
         <div class="controls">
           <BaseButton text="Search" />
-          <BaseButton text="I'm Feeling Lucky" @click="feelingLucky" />
         </div>
       </form>
     </BaseCard>
+
+    <BaseCard>
+      <h1>Results</h1>
+      <div v-if="!results.length" class="no-results">
+        <p>No results found.</p>
+      </div>
+
+      <div v-else class="results">
+        <BaseCard v-for="result in results" :key="result.url">
+          <h2>{{ result.title }}</h2>
+          <h3>{{ result.url }}</h3>
+          <p>{{ result.snippet }}</p>
+        </BaseCard>
+      </div>
+    </BaseCard>
+
+    <div class="page-slider">
+      <BaseButton v-if="page > 0" text="Previous" @click="previousPage" />
+      <BaseButton v-if="page < total" text="Next" @click="nextPage" />
+    </div>
   </div>
 </template>
 
@@ -36,7 +59,7 @@ import BaseDialog from '@/components/ui/BaseDialog.vue';
 import BaseSpinner from '@/components/ui/BaseSpinner.vue';
 import { defineComponent } from 'vue';
 
-import type { Error } from '@/interfaces';
+import type { SearchResult, Error, QueryResult } from '@/interfaces';
 import { search } from '@/axios-instance';
 
 export default defineComponent({
@@ -44,6 +67,10 @@ export default defineComponent({
   data() {
     return {
       query: { value: '', valid: true },
+      page: 1,
+      results: [] as SearchResult[],
+      total: 0,
+      isLoading: false,
       error: null as Error | null
     };
   },
@@ -53,21 +80,11 @@ export default defineComponent({
     }
   },
   methods: {
-    feelingLucky() {
-      this.validateForm();
-
-      if (!this.validForm) return;
-      this.submitForm();
-
-      search(this.query.value)
-        .then(({ results }) => {
-          if (results.length === 0)
-            this.$router.push({ path: '/search', query: { query: this.query.value } });
-          else window.open(results[0].url);
-        })
-        .catch((e) => {
-          this.error = e?.response?.data?.error || { message: e?.message || 'UNKNOWN_ERROR' };
-        });
+    nextPage() {
+      window.open(`https://www.google.com?page=${this.page + 1}`);
+    },
+    previousPage() {
+      window.open(`https://www.google.com?page=${this.page - 1}`);
     },
     clearValidity() {
       this.query.valid = true;
@@ -80,11 +97,30 @@ export default defineComponent({
 
       if (!this.validForm) return;
 
-      this.$router.push({ path: '/search', query: { q: this.query.value, page: 1 } });
+      this.$router.push({
+        path: '/search',
+        query: { q: this.query.value, page: this.page }
+      });
     },
     handleError() {
       this.error = null;
     }
+  },
+  created() {
+    this.query.value = this.$route.query?.q?.toString() ?? '';
+    this.page = parseInt(this.$route.query?.page?.toString() ?? '1');
+
+    search(this.query.value, this.page)
+      .then(({ total, results }) => {
+        this.total = total;
+        this.results = results;
+      })
+      .catch((e) => {
+        this.error = e?.response?.data?.error || { message: e?.message || 'UNKNOWN_ERROR' };
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
   }
 });
 </script>

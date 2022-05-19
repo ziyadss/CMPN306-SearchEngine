@@ -104,8 +104,8 @@ public class QueryProcessor extends HttpServlet {
 
         try (PrintWriter out = response.getWriter()) {
             String elements = results.map(QueryResult::toJson).collect(Collectors.joining(","));
-            String json     = "{\"results\":[%s]}";
-            out.printf(json, elements);
+            String json     = "{\"total\":%d,\"results\":[%s]}";
+            out.printf(json, 0, elements);
         } catch (IOException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
