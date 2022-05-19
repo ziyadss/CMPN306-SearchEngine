@@ -2,11 +2,13 @@ package com.cmpn306.indexer;
 
 import com.cmpn306.database.Document;
 import com.cmpn306.database.DocumentsTable;
-import com.cmpn306.util.Filterer;
 import com.cmpn306.database.WordsTable;
+import com.cmpn306.util.Filterer;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Indexer implements Runnable {
     private int sleepTime;
@@ -18,14 +20,14 @@ public class Indexer implements Runnable {
 
     private WordsTable wordsTable;
 
-    @Override public void run() {
+    @Override
+    public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
-
 
             // Fetch non indexed docs
             List<Document> documents;
@@ -45,7 +47,7 @@ public class Indexer implements Runnable {
                     e.printStackTrace();
                 }
 
-                Map<String, Long> wordFreq = new HashMap<String, Long>();
+                Map<String, Long> wordFreq = new HashMap<>();
                 words.forEach(word -> wordFreq.merge(word, 1L, Long::sum));
                 //update word count for the URL doc
                 try {
@@ -61,8 +63,6 @@ public class Indexer implements Runnable {
                         e.printStackTrace();
                     }
                 }
-                else continue;
-
 
             }
             try {
@@ -81,13 +81,12 @@ public class Indexer implements Runnable {
         if (documents.size() > 0) {
             documentsTable.updateIndexTime(documents);
         }
-        else return;
     }
 
     private static class Index {
         private Indexer indexer;
 
-        public void initializeIndexr(){
+        public void initializeIndexer() {
             new Thread(indexer, "indexer").start();
         }
     }

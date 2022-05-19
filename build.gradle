@@ -12,6 +12,8 @@ repositories {
 
 dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.0.21'
+    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:10.0.21'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
@@ -21,5 +23,5 @@ test {
 }
 
 application {
-    mainClass = 'com.cmpn306.Main'
+    mainClass = System.getProperty('exec.mainClass') ?: 'com.cmpn306.Main'
 }
