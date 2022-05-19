@@ -23,10 +23,9 @@ public enum Database {
 
     void createTables() {
         try {
-            String[] tokens = Arrays
-                    .stream(Files.readString(Path.of(SCHEMA_PATH), StandardCharsets.UTF_8).split(";"))
-                    .filter(s -> !s.isBlank())
-                    .toArray(String[]::new);
+            String[] tokens = Arrays.stream(Files.readString(Path.of(SCHEMA_PATH), StandardCharsets.UTF_8).split(";"))
+                                    .filter(s -> !s.isBlank())
+                                    .toArray(String[]::new);
             updateBatch(tokens);
         } catch (IOException | SQLException e) {
             throw new RuntimeException(e);

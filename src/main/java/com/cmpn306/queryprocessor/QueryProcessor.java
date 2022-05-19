@@ -1,15 +1,22 @@
 package com.cmpn306.queryprocessor;
 
 import com.cmpn306.util.Stemmer;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class QueryProcessor {
+@WebServlet(name = "QueryProcessor", urlPatterns = {"/search", "/search/"})
+public class QueryProcessor extends HttpServlet {
     private static final int     PAGE_ITEM_COUNT = 10;
     private static final Pattern PHRASE          = Pattern.compile("\"([^\"]+?)\"");
     private static final Pattern EXCLUDED        = Pattern.compile("-(\\w+)");
@@ -21,7 +28,6 @@ public class QueryProcessor {
     }
 
     private static QueryItem tokenize(String query) {
-
         Matcher phraseMatcher = PHRASE.matcher(query);
         List<String> phrases = phraseMatcher.results()
                                             .map(QueryProcessor::processMatch)
@@ -59,30 +65,49 @@ public class QueryProcessor {
         return new QueryItem(phrases, excluded, included, words);
     }
 
-    public static List<QueryResult> process(String query) {
-        System.out.println("Processing query: " + query);
+    public static Stream<QueryResult> process(String query, int page) {
         QueryItem tokens = tokenize(query);
-        System.out.println("Phrases: " + tokens.phrases());
-        System.out.println("Excluded: " + tokens.excluded());
-        System.out.println("Included: " + tokens.included());
-        System.out.println("Words: " + tokens.words());
-
-        List<QueryResult> results = new ArrayList<>();
 
         List<String> tokensList = Stream.of(tokens.included(), tokens.phrases(), tokens.words())
                                         .flatMap(List::stream)
                                         .distinct()
                                         .toList();
 
-        //Ranker.rank(tokensList, results); TODO: fix function call
+        // TODO: search using the tokensList and the page number
+
+        QueryResult qr1 = new QueryResult("title1", "url1", "snippet1");
+        QueryResult qr2 = new QueryResult("title2", "url2", "snippet2");
+
+        Stream<QueryResult> results = Stream.of(qr1, qr2);
+        // TODO: rank results
 
         return results;
+    }
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+        String query  = request.getParameter("q");
+        String page_s = request.getParameter("page");
+        int    page   = page_s == null ? 1 : Integer.parseInt(page_s.trim().replaceAll("/$", ""));
+
+        Stream<QueryResult> results = process(query, page);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        try (PrintWriter out = response.getWriter()) {
+            String elements = results.map(QueryResult::toJson).collect(Collectors.joining(","));
+            String json     = "{\"results\":[%s]}";
+            out.printf(json, elements);
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     private record QueryItem(List<String> phrases, List<String> excluded, List<String> included, List<String> words) { }
 
     public record QueryResult(String title, String url, String snippet) {
-        String toJSON() {
+        String toJson() {
             return String.format("{\"title\":\"%s\",\"url\":\"%s\",\"snippet\":\"%s\"}", title, url, snippet);
         }
     }
