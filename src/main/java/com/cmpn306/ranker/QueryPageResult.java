@@ -11,9 +11,10 @@ public class QueryPageResult {
     double tfIdf;
 
     //Data members from the documents table
-    int docWordCount;
-    int content;
-    int title;
+    int    docWordCount;
+    int    content;
+    int    title;
+    double relevanceScore;
 
     public QueryPageResult(String word, String docUrl, int wordCount, int docWordCount, int content, int title) {
         this.word         = word;
@@ -23,8 +24,6 @@ public class QueryPageResult {
         this.content      = content;
         this.title        = title;
     }
-
-    double relevanceScore;
 
     public QueryPageResult() {
 

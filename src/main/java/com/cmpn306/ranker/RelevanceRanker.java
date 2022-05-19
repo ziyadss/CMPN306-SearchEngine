@@ -1,16 +1,12 @@
 package com.cmpn306.ranker;
 
-import com.cmpn306.queryprocessor.QueryProcessor;
-
 import java.util.*;
 
 public class RelevanceRanker {
 
-
     public RelevanceRanker() {
 
     }
-
 
     public void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
 

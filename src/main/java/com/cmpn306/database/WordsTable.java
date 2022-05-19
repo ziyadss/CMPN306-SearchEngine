@@ -17,7 +17,7 @@ public class WordsTable {
 
         query = "REPLACE INTO word_document(docUrl, word, wordCount) VALUES ";
         String entries = words.stream()
-                              .map(word -> "('" + docUrl + "', '" + word + "', " + wordFreq.get(word)+ ")" )
+                              .map(word -> "('" + docUrl + "', '" + word + "', " + wordFreq.get(word) + ")")
                               .collect(Collectors.joining(", ", "", ";"));
 
         Database.INSTANCE.update(query + entries);

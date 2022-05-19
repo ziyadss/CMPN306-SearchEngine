@@ -11,10 +11,9 @@ public class WebGraphNode {
     public WebGraphNode(String docUrl, double pageRank) {
         this.docUrl   = docUrl;
         this.pageRank = pageRank;
-        outGoingUrls = new Hashtable<String,WebGraphNode>();
-        incomingUrls = new Hashtable<String,WebGraphNode>();
+        outGoingUrls  = new Hashtable<String, WebGraphNode>();
+        incomingUrls  = new Hashtable<String, WebGraphNode>();
     }
-
 
     public String getDocUrl() {
         return docUrl;

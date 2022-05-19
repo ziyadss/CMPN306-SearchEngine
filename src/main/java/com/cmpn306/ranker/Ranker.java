@@ -8,7 +8,7 @@ public class Ranker {
 
     private static final PopularityRanker popularityRanker = new PopularityRanker();
     private static final RelevanceRanker  relevanceRanker  = new RelevanceRanker();
-    static int totalDocCount;
+    static               int              totalDocCount;
 
     public Ranker() {
 
@@ -19,7 +19,7 @@ public class Ranker {
     }
 
     public void setTotalDocCount(int totalDocCount) {
-        this.totalDocCount = totalDocCount;
+        Ranker.totalDocCount = totalDocCount;
     }
 
     public static void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
