@@ -13,8 +13,17 @@ public class Ranker {
 
     }
 
+    public int getTotalDocCount() {
+        return totalDocCount;
+    }
+
+    public void setTotalDocCount(int totalDocCount) {
+        this.totalDocCount = totalDocCount;
+        relevanceRanker.setTotalDocCount(this.totalDocCount);
+    }
+
     public void rank(HashMap<String, List<QueryPageResult>> resultsMap) {
-        //NOTE: HashMap are faster however if they are not synchronized, if threading is used HashTable is preferred
+        //NOTE: HashMap are faster however it is not synchronized, if threading is used HashTable is preferred
         relevanceRanker.rank(resultsMap);
     }
 

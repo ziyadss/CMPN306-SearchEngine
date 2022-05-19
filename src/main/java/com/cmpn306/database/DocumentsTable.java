@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentsTable {
+
+	//deprecated, for testing only
     public void selectUrl() throws SQLException {
         String query = "SELECT * FROM documents";
         try (ResultSet rs = Database.INSTANCE.query(query)) {
@@ -14,6 +16,8 @@ public class DocumentsTable {
             }
         }
     }
+
+
 
     public List<Document> getIndexable(Integer limit) throws SQLException {
         String query = "SELECT docUrl, content, timeCurrent, pageRank, pageTitle FROM documents WHERE indexTime < timeCurrent limit " + limit;
@@ -38,4 +42,18 @@ public class DocumentsTable {
 
         Database.INSTANCE.update(query);
     }
+
+	public void updateIndexTime(List<Document> documents) throws SQLException {
+		StringBuilder query = new StringBuilder("UPDATE documents SET indexTime = " + System.currentTimeMillis() + " WHERE docUrl in (");
+
+		for (int i = 0; i < documents.size(); ++i) {
+			query.append(documents.get(i).getDocUrl());
+			if (i != documents.size() - 1)
+				query.append(", ");
+		}
+		query.append(");");
+
+		Database.INSTANCE.update(query.toString());
+		return;
+	}
 }
