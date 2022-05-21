@@ -41,10 +41,10 @@ public class QuerySuggestor extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             List<String> results = suggestions(query);
             String elements = results.stream()
-                                     .map(s -> s.replace("\"", "\\\""))
-                                     .collect(Collectors.joining("\",\"", "[\"", "\"]"));
-            String json = "{\"suggestions\":%s}";
-            out.printf(json, elements);
+                                     .map(s -> "\"" + s.replace("\"", "\\\"") + "\"")
+                                     .collect(Collectors.joining(","));
+            String json = String.format("{\"suggestions\":[%s]}", elements);
+            out.print(json);
         } catch (IOException | SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

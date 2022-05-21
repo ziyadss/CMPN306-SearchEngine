@@ -179,13 +179,13 @@ public class QueryProcessor extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
 
         try (PrintWriter out = response.getWriter()) {
-            Response res = process(query, page, lucky);
-            String elements = res.results()
-                                 .stream()
-                                 .map(QueryResult::toJson)
-                                 .collect(Collectors.joining(",", "[\"", "\"]"));
-            String tokens = res.tokens().stream().collect(Collectors.joining(",", "[\"", "\"]"));
-            String json   = "{\"total\":%d,\"results\":%s, \"tokens\":%s}";
+            Response res      = process(query, page, lucky);
+            String   elements = res.results().stream().map(QueryResult::toJson).collect(Collectors.joining(","));
+            String tokens = res.tokens()
+                               .stream()
+                               .map(s -> "\"" + s.replaceAll("\"", "\\\"") + "\"")
+                               .collect(Collectors.joining(","));
+            String json = "{\"total\":%d,\"results\":[%s], \"tokens\":[%s]}";
             out.printf(json, res.total(), elements, tokens);
             Database.update("INSERT OR IGNORE INTO query (text) VALUES ('" + query.replaceAll("\"",
                                                                                               quoteReplacement("\"")) + "')");
@@ -200,7 +200,9 @@ public class QueryProcessor extends HttpServlet {
 
     public record QueryResult(String title, String url, String snippet) {
         QueryResult(QueryPageResult queryPageResult) {
-            this(queryPageResult.getTitle(), queryPageResult.getDocUrl(), queryPageResult.getSnippet());
+            this(queryPageResult.getTitle(),
+                 queryPageResult.getDocUrl(),
+                 queryPageResult.getSnippet().replaceAll("\"", "\\\""));
         }
 
         String toJson() {
