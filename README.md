@@ -26,18 +26,7 @@ gradle run -Dexec.mainClass=com.cmpn306.package.class
 
 ## Team Members:
 
-| Member               | ID      | Email                          |
-| -------------------- | ------- | ------------------------------ |
-| Ahmed Ayman Saad     | 1180475 | ahmedaymansaadelsaid@gmail.com |
-| Khaled Ashraf Zohair | 1180564 | khalidzohair12@gmail.com       |
-| Kareem Hossam Eldin  | 1152302 |                                |
-| Ziyad Sameh Sobhy    | 1180474 | ziyad.ss@hotmail.com           |
-
-## Workload
-
-| Member        | Contributions                  |
-| ------------- | ------------------------------ |
-| Ahmed Ayman   | Ranker                         |
-| Khaled Ashraf | Indexer                        |
-| Kareem Hossam | Crawler                        |
-| Ziyad Sameh   | Query Processor, Web Interface |
+- Ahmed Ayman Saad
+- Khaled Ashraf Zohair
+- Kareem Hossam Eldin
+- Ziyad Sameh Sobhy
