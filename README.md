@@ -2,7 +2,7 @@
 
 Advanced Programming Techniques Project - third year CUFE students.
 
-A search engine - named Psyche, after the Greek goddess of the soul Psyche, Cupid's wife, whose life was spent on a search for love and growth, in effect, a search for onself.
+A search engine - named Psyche, after the Greek goddess of the soul Psyche, Cupid's wife, whose life was spent on a search for love and growth, in effect, a search for oneself.
 
 ## Instructions
 
