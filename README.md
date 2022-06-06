@@ -1,4 +1,4 @@
-# CMPN306-SearchEngine
+# CMPN306-Psyche-SearchEngine
 
 Advanced Programming Techniques Project - third year CUFE students.
 
